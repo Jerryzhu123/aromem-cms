@@ -1,0 +1,457 @@
+import type { HomeData } from "@/types/home";
+
+/** Home-page content extracted verbatim from aromem.com (zh + en). */
+export const zhHome: HomeData = {
+  "lang": "zh",
+  "slider": [
+    {
+      "src": "/uploads/slide/20250311/013d47a114f7c624377809680be813ab.png",
+      "alt": "slider img"
+    },
+    {
+      "src": "/uploads/slide/20250310/eeaa2e871ae6ca7c1b7fc1fd32f7fb09.png",
+      "alt": "slider img"
+    },
+    {
+      "src": "/uploads/slide/20250310/1abeb422e311b53cc50ab91efa0a0f84.png",
+      "alt": "slider img"
+    }
+  ],
+  "portfolio": {
+    "title": "产品中心",
+    "filters": [
+      {
+        "filter": "all",
+        "label": "全部/"
+      },
+      {
+        "filter": "cartridges",
+        "label": "滤芯与滤芯壳体/"
+      },
+      {
+        "filter": "ro",
+        "label": "RO 膜与组件/"
+      }
+    ],
+    "items": [
+      {
+        "category": "cartridges",
+        "full": "",
+        "title": "大流量滤芯",
+        "thumb": "",
+        "alt": "大流量滤芯",
+        "link": "/zh/products/filter-cartridges/high-flow"
+      },
+      {
+        "category": "cartridges",
+        "full": "",
+        "title": "折叠滤芯",
+        "thumb": "",
+        "alt": "折叠滤芯",
+        "link": "/zh/products/filter-cartridges/pleated"
+      },
+      {
+        "category": "cartridges",
+        "full": "",
+        "title": "替代与兼容滤芯",
+        "thumb": "",
+        "alt": "替代与兼容滤芯",
+        "link": "/zh/products/filter-cartridges/replacement-compatible"
+      },
+      {
+        "category": "cartridges",
+        "full": "",
+        "title": "PP 熔喷滤芯",
+        "thumb": "",
+        "alt": "PP 熔喷滤芯",
+        "link": "/zh/products/filter-cartridges/pp-melt-blown"
+      },
+      {
+        "category": "cartridges",
+        "full": "",
+        "title": "线绕滤芯",
+        "thumb": "",
+        "alt": "线绕滤芯",
+        "link": "/zh/products/filter-cartridges/string-wound"
+      },
+      {
+        "category": "cartridges",
+        "full": "",
+        "title": "滤芯壳体",
+        "thumb": "",
+        "alt": "滤芯壳体",
+        "link": "/zh/products/filter-cartridges/filter-housings"
+      },
+      {
+        "category": "ro",
+        "full": "",
+        "title": "BWRO 苦咸水膜元件",
+        "thumb": "",
+        "alt": "BWRO 苦咸水膜元件",
+        "link": "/zh/products/ro-membranes"
+      },
+      {
+        "category": "ro",
+        "full": "",
+        "title": "ULP 超低压膜元件",
+        "thumb": "",
+        "alt": "ULP 超低压膜元件",
+        "link": "/zh/products/ro-membranes"
+      },
+      {
+        "category": "ro",
+        "full": "",
+        "title": "LP 低压膜元件",
+        "thumb": "",
+        "alt": "LP 低压膜元件",
+        "link": "/zh/products/ro-membranes"
+      },
+      {
+        "category": "ro",
+        "full": "",
+        "title": "SWRO 海水淡化膜元件",
+        "thumb": "",
+        "alt": "SWRO 海水淡化膜元件",
+        "link": "/zh/products/ro-membranes"
+      }
+    ]
+  },
+  "video": {
+    "heading": "SURO-苏瑞膜",
+    "body": "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;苏州苏瑞膜纳米科技集团有限公司成立于2016年，是由美国、新加坡等地世界 500 强企业从事研发与管理工作十余年的海归团队创办的高科技企业，主要从事属于国家战略新兴产业的水分离核心材料\"复合反渗透与纳滤膜\"的研发、生产、销售与服务。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;公司始终坚持\"将一片分离膜做到极致\"的专注精神、快速迭代的精益制造原则，不断自主创新，做出品质一流的产品。",
+    "src": "/static/index/video/video1.mp4"
+  },
+  "news": {
+    "title": "新闻资讯",
+    "slides": [
+      {
+        "href": "/zh/news_detail?id=49",
+        "image": "/uploads/shici/20260408/5d1b53c3541977e438e7f3a9d42970f6.png",
+        "caption": "苏瑞膜邀您共赴第27届上海国际环博会，共探膜技术芯未来!"
+      },
+      {
+        "href": "/zh/news_detail?id=48",
+        "image": "/uploads/shici/20240822/d5c50c6a6d53125f73d2e903dbba47fd.png",
+        "caption": "苏瑞膜入选2024年度自然资源标准制修订计划单位"
+      },
+      {
+        "href": "/zh/news_detail?id=47",
+        "image": "/uploads/shici/20240514/971290734637b7f9d0de84d9218fc33e.jpg",
+        "caption": "苏瑞膜应邀参加AIM2024全球顶级投资盛会"
+      },
+      {
+        "href": "/zh/news_detail?id=46",
+        "image": "/uploads/shici/20240409/a7f8ba146e94822b073690986f6327b0.jpg",
+        "caption": "苏瑞膜与您相约第二十五届中国环博会- 展位号：N1馆C02/E02"
+      },
+      {
+        "href": "/zh/news_detail?id=45",
+        "image": "/uploads/shici/20231225/845bbd7ee601b438a655670eece64548.jpg",
+        "caption": "再传喜报！苏瑞膜获评江苏省2023专精特新中小企业！"
+      }
+    ],
+    "list": [
+      {
+        "href": "/zh/news_detail?id=49",
+        "title": "苏瑞膜邀您共赴第27届上海国际环博会，共探膜技术芯未来!",
+        "excerpt": "上海环博会(IE expo Shanghai)将于2026年4月13-15日在上海新国际博览中心再度举办。本次展会，苏瑞膜将首发2026全新系列产品：ZCon零排系列与TOC中性分子高去除系列膜，以及反渗透/纳滤全系列、特种分离渗透膜、碟管式膜组件等全品类产品国产解决方案。"
+      },
+      {
+        "href": "/zh/news_detail?id=48",
+        "title": "苏瑞膜入选2024年度自然资源标准制修订计划单位",
+        "excerpt": "苏州苏瑞膜纳米科技有限公司在《2024年度自然资源标准制修订工作计划》中脱颖而出，成功入选。这一成就不仅体现了公司在膜技术领域的卓越实力，更标志着苏瑞膜在推动自然资源高效利用和保护方面的重要贡献。"
+      },
+      {
+        "href": "/zh/news_detail?id=47",
+        "title": "苏瑞膜应邀参加AIM2024全球顶级投资盛会",
+        "excerpt": "第十三届AIM投资峰会于2024年5月9日阿联酋阿布扎比完美谢幕。苏瑞膜在硅港资本的邀请及支持下参加本次峰会，苏瑞膜研发总监李成永博士在5月9日的AIM企业家投资峰会—中小企业专场分论坛中围绕\"蓝色经济：可持续经济的新浪潮\"的会议议题发表主题演讲，展示了苏瑞膜的企业理念、产品技术、应用场景及解决方案"
+      }
+    ],
+    "button": {
+      "href": "/zh/news_list",
+      "label": "更多新闻详情"
+    }
+  },
+  "projects": {
+    "title": "工程实例",
+    "cards": [
+      {
+        "href": "/zh/projects?id=1",
+        "title": "电力行业",
+        "subtitle": "某电厂应用苏瑞膜反渗透膜系统",
+        "image": "/uploads/shici/20210909/5aa814812ba5e8805e5e4b242d9a2206.jpg"
+      },
+      {
+        "href": "/zh/projects?id=2",
+        "title": "钢铁行业",
+        "subtitle": "某钢铁厂应用苏瑞膜反渗透膜系统",
+        "image": "/uploads/shici/20210909/5eea2d61e1c269bf488601a3fa79d9a2.jpg"
+      },
+      {
+        "href": "/zh/projects?id=3",
+        "title": "海水淡化",
+        "subtitle": "某海水淡化厂采用苏瑞膜\"双膜法工艺\"深度处理海水",
+        "image": "/uploads/shici/20210909/2659174eff7aa8d5a623527e96d91e2a.jpg"
+      },
+      {
+        "href": "/zh/projects?id=4",
+        "title": "精细化工",
+        "subtitle": "某精细化工应用苏瑞膜反渗透膜系统",
+        "image": "/uploads/shici/20210909/2628d27bcf48e17c7e51322c6105529c.jpg"
+      },
+      {
+        "href": "/zh/projects?id=5",
+        "title": "渗透液处理行业",
+        "subtitle": "某固体废弃物处理场应用苏瑞膜纳滤膜系统",
+        "image": "/uploads/shici/20210909/5cc6626161b6421227e53698def087ad.jpg"
+      }
+    ]
+  },
+  "about": {
+    "title": "关于我们",
+    "cards": [
+      {
+        "image": "/static/index/images/index_aboutus_4.jpg",
+        "title": "企业文化",
+        "body": "将一片复合反渗透膜做到极致<br>专注净水膜技术，用科技改善生活<br> 共同创建一家世界一流反渗透膜专业化公司",
+        "href": "/zh/about2",
+        "readMore": "了解更多"
+      },
+      {
+        "image": "/static/index/images/index_aboutus_2.jpg",
+        "title": "公司概况",
+        "body": "苏州苏瑞膜纳米科技集团有限公司成立于2016年，是由美国、新加坡等地世界 500 强企业从事研发与管理工作十余年的海归团队创办的高科技企业，主要从事属于国家战略新兴产业的水分离核心材料\"复合反渗透与纳滤膜\"的研发、生产、销售与服务。",
+        "href": "/zh/about1",
+        "readMore": "了解更多"
+      },
+      {
+        "image": "/static/index/images/index_aboutus_3.jpg",
+        "title": "联系我们",
+        "body": "地址：苏州市吴中区甪直镇凌港路128号（富民一区）;\r\n嘉兴市秀洲区油车港镇茶园北路257号5幢<br>电话：0512-62700495<br>邮箱：hr@aromem.com；sales@aromem.com",
+        "href": "/zh/about3",
+        "readMore": "了解更多"
+      }
+    ]
+  }
+};
+
+export const enHome: HomeData = {
+  "lang": "en",
+  "slider": [
+    {
+      "src": "/uploads/slide/20210908/4c9a76d773aec7cc5ae75c8bfb279b49.jpg",
+      "alt": "slider img"
+    },
+    {
+      "src": "/uploads/slide/20210923/5e85ecc9fbfba29ebfb26ff3283b7279.jpg",
+      "alt": "slider img"
+    }
+  ],
+  "portfolio": {
+    "title": "Product center",
+    "filters": [
+      {
+        "filter": "all",
+        "label": "All the products/"
+      },
+      {
+        "filter": "cartridges",
+        "label": "Cartridges & Housings/"
+      },
+      {
+        "filter": "ro",
+        "label": "RO Membranes & Components/"
+      }
+    ],
+    "items": [
+      {
+        "category": "cartridges",
+        "full": "",
+        "title": "High Flow Filter Cartridges",
+        "thumb": "",
+        "alt": "High Flow Filter Cartridges",
+        "link": "/products/filter-cartridges/high-flow"
+      },
+      {
+        "category": "cartridges",
+        "full": "",
+        "title": "Pleated Filter Cartridges",
+        "thumb": "",
+        "alt": "Pleated Filter Cartridges",
+        "link": "/products/filter-cartridges/pleated"
+      },
+      {
+        "category": "cartridges",
+        "full": "",
+        "title": "Replacement & Compatible Cartridges",
+        "thumb": "",
+        "alt": "Replacement & Compatible Cartridges",
+        "link": "/products/filter-cartridges/replacement-compatible"
+      },
+      {
+        "category": "cartridges",
+        "full": "",
+        "title": "PP Melt Blown Filter Cartridges",
+        "thumb": "",
+        "alt": "PP Melt Blown Filter Cartridges",
+        "link": "/products/filter-cartridges/pp-melt-blown"
+      },
+      {
+        "category": "cartridges",
+        "full": "",
+        "title": "String Wound Filter Cartridges",
+        "thumb": "",
+        "alt": "String Wound Filter Cartridges",
+        "link": "/products/filter-cartridges/string-wound"
+      },
+      {
+        "category": "cartridges",
+        "full": "",
+        "title": "Filter Housings",
+        "thumb": "",
+        "alt": "Filter Housings",
+        "link": "/products/filter-cartridges/filter-housings"
+      },
+      {
+        "category": "ro",
+        "full": "",
+        "title": "BWRO Brackish Water Membranes",
+        "thumb": "",
+        "alt": "BWRO Brackish Water Membranes",
+        "link": "/products/ro-membranes"
+      },
+      {
+        "category": "ro",
+        "full": "",
+        "title": "ULP Ultra-Low Pressure Membranes",
+        "thumb": "",
+        "alt": "ULP Ultra-Low Pressure Membranes",
+        "link": "/products/ro-membranes"
+      },
+      {
+        "category": "ro",
+        "full": "",
+        "title": "LP Low Pressure Membranes",
+        "thumb": "",
+        "alt": "LP Low Pressure Membranes",
+        "link": "/products/ro-membranes"
+      },
+      {
+        "category": "ro",
+        "full": "",
+        "title": "SWRO Seawater Membranes",
+        "thumb": "",
+        "alt": "SWRO Seawater Membranes",
+        "link": "/products/ro-membranes"
+      }
+    ]
+  },
+  "video": null,
+  "news": {
+    "title": "News and information",
+    "slides": [
+      {
+        "href": "/news_detail?id=31",
+        "image": "/uploads/shici/20221214/efd3a24de903b5f5f0a81132f64f7f84.jpg",
+        "caption": "Aromem Pte.,ltd(SURO) secured $15 million financing again"
+      },
+      {
+        "href": "/news_detail?id=26",
+        "image": "/uploads/shici/20210910/d0a546624efa5b5c455be8c32deb077d.jpg",
+        "caption": "Company AROMEM signed financing agreement with Yuanhe Origin and Shihu Fund"
+      },
+      {
+        "href": "/news_detail?id=24",
+        "image": "/uploads/shici/20210910/bdc42c20bfd64298326d64eb7ef8b826.jpg",
+        "caption": "Company AROMEM in AQUATECH CHINA 2020 Water Exhibition has concluded successfully."
+      },
+      {
+        "href": "/news_detail?id=14",
+        "image": "/uploads/shici/20210910/f6a768b576cab95749f6238673a054a7.jpg",
+        "caption": "Company AROMEM was invited to attend Qingdao International Water Conference 2019"
+      },
+      {
+        "href": "/news_detail?id=9",
+        "image": "/uploads/shici/20210910/b3763dcf7a37ea4cbf038ce3269bc820.jpg",
+        "caption": "The reverse osmosis membrane project of Lanxi Ruiou Nanotechnology Co., LTD has been started in the \"light film town\"."
+      }
+    ],
+    "list": [
+      {
+        "href": "/news_detail?id=31",
+        "title": "Aromem Pte.,ltd(SURO) secured $15 million financing again",
+        "excerpt": "Recently, SURO has secured $15 million financing again. The financing was led by Silicon Harbour Capital, China Fortune-Tech Capital and Yunjin Capital. China Renaissance is the exclusive financing adviser."
+      },
+      {
+        "href": "/news_detail?id=26",
+        "title": "Company AROMEM signed financing agreement with Yuanhe Origin and Shihu Fund",
+        "excerpt": "The company AROMEM completed the signing of the financing agreement with Yuanhe Origin and Shihu Fund at the scene of the show. This financing will continue to strengthen the company's technology research and development and increased capacity, Expanding market share, and better create value for customers and partners."
+      }
+    ],
+    "button": {
+      "href": "/news_list",
+      "label": "More"
+    }
+  },
+  "projects": {
+    "title": "Engineering examples",
+    "cards": [
+      {
+        "href": "/projects?id=1",
+        "title": "THE POWER INDUSTRY",
+        "subtitle": "Application of SURO membrane system in a power plant",
+        "image": "/uploads/shici/20210909/5aa814812ba5e8805e5e4b242d9a2206.jpg"
+      },
+      {
+        "href": "/projects?id=2",
+        "title": "THE IRON AND STEEL INDUSTRY",
+        "subtitle": "Application of SURO membrane system in a steel plant",
+        "image": "/uploads/shici/20210909/5eea2d61e1c269bf488601a3fa79d9a2.jpg"
+      },
+      {
+        "href": "/projects?id=3",
+        "title": "SEA WATER DESALINATION",
+        "subtitle": "Application of our company's \"double membrane process\" to deeply treat seawater in a seawater desalination plant",
+        "image": "/uploads/shici/20210909/2659174eff7aa8d5a623527e96d91e2a.jpg"
+      },
+      {
+        "href": "/projects?id=4",
+        "title": "FINE CHEMICAL INDUSTRY",
+        "subtitle": "Application of SURO membrane system in a fine chemical industry",
+        "image": "/uploads/shici/20210909/2628d27bcf48e17c7e51322c6105529c.jpg"
+      },
+      {
+        "href": "/projects?id=5",
+        "title": "OSMOTIC TREATMENT INDUSTRY",
+        "subtitle": "Application of SURO membrane system in a solid waste disposal site",
+        "image": "/uploads/shici/20210909/5cc6626161b6421227e53698def087ad.jpg"
+      }
+    ]
+  },
+  "about": {
+    "title": "ABOUT US",
+    "cards": [
+      {
+        "image": "/static/index/images/index_aboutus_4.jpg",
+        "title": "ENTERPRISE CULTURE",
+        "body": "Make every RO membrane sheet to the extreme.<br>Focus on water purification membrane technology, improve life with technology.<br> To jointly create a world - class reverse osmosis membrane professional company.",
+        "href": "/about2",
+        "readMore": "MORE"
+      },
+      {
+        "image": "/static/index/images/index_aboutus_2.jpg",
+        "title": "COMPANY PROFILE",
+        "body": "AROMEM PTE. LTD. (SURO), is established in 2016, founded by the returnee team from United States and Singapore. The high-tech enterprise mainly focused on R&D, production, sales and services for reverse osmosis (RO) and nanoﬁltration (NF) membrane sheets and elements.",
+        "href": "/about1",
+        "readMore": "MORE"
+      },
+      {
+        "image": "/static/index/images/index_aboutus_3.jpg",
+        "title": "CONTACT US",
+        "body": "Address: Building 1, Fumin Area 1 Industrial Park, No.128 Linggang Road, Luzhi Town，Wuzhong District, Suzhou city, Jiangsu province, China; \r\nBuilding 5, No.257 Chayuan North Road,Youchegang Town, Xiuzhou District, Jiaxing city, Zhejiang province, China<br>Phone: +86-0512-62700495<br>Email: hr@aromem.com；sales@aromem.com",
+        "href": "/about3",
+        "readMore": "MORE"
+      }
+    ]
+  }
+};

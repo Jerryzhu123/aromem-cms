@@ -1,0 +1,1154 @@
+/*
+ * 滤芯产品线（Filter Cartridges）前台样式。
+ *
+ * 原则：只补充新栏目需要的类，全部沿用站点既有视觉令牌，
+ * 不修改 globals.css / style.css / mystyle.css 中的任何既有规则。
+ *  - 主色 #0091ea（深一档 #0277bd）、正文灰 #323232
+ *  - 字体 Open Sans（正文）/ Raleway（标题），与全站一致
+ *  - 容器宽度交给外层 .container（1140px），本文件只管内部布局
+ */
+
+.fc-page {
+  font-family: "Open Sans", Arial, Helvetica, sans-serif;
+  color: #323232;
+  padding: 40px 0 60px;
+}
+
+/* 结构预览提示条 */
+.fc-notice {
+  border-left: 4px solid #0091ea;
+  background: #eef6fd;
+  color: #33506b;
+  font-size: 13px;
+  line-height: 1.7;
+  padding: 10px 14px;
+  margin: 0 0 24px;
+}
+
+/* 页面标题区 */
+.fc-head h1 {
+  font-family: Raleway, "Open Sans", Arial, sans-serif;
+  font-size: 30px;
+  line-height: 1.3;
+  margin: 0 0 10px;
+  color: #111;
+}
+.fc-head .fc-lede {
+  font-size: 15px;
+  line-height: 1.9;
+  color: #55606b;
+  margin: 0 0 14px;
+  max-width: 900px;
+}
+.fc-head .fc-chips {
+  margin: 0 0 26px;
+}
+
+/* 能力标签 / 筛选标签 */
+.fc-chip {
+  display: inline-block;
+  border: 1px solid #cfe4f5;
+  background: #f7fbff;
+  color: #0277bd;
+  border-radius: 14px;
+  font-size: 12px;
+  line-height: 1;
+  padding: 6px 10px;
+  margin: 0 8px 8px 0;
+}
+
+/* 系列 / 产品卡片网格 */
+.fc-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  margin: 0 0 34px;
+}
+.fc-grid.fc-grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+@media (max-width: 991px) {
+  .fc-grid,
+  .fc-grid.fc-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 640px) {
+  .fc-grid,
+  .fc-grid.fc-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.fc-card {
+  border: 1px solid #e6e9ec;
+  border-radius: 6px;
+  background: #fff;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.fc-card:hover {
+  box-shadow: 0 6px 18px rgba(0, 145, 234, 0.12);
+  transform: translateY(-2px);
+}
+.fc-card.is-placeholder {
+  border-style: dashed;
+  border-color: #c2185b;
+  background: #fffafc;
+}
+.fc-card-media {
+  display: block;
+  aspect-ratio: 7 / 5;
+  background: #f5f7f9;
+  border-bottom: 1px solid #eef1f4;
+  overflow: hidden;
+}
+.fc-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.fc-card-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.fc-card-title {
+  font-family: Raleway, "Open Sans", Arial, sans-serif;
+  font-size: 17px;
+  line-height: 1.4;
+  margin: 0 0 6px;
+}
+.fc-card-title a {
+  color: #111;
+  text-decoration: none;
+}
+.fc-card-title a:hover {
+  color: #0091ea;
+}
+.fc-card-meta {
+  font-size: 12.5px;
+  line-height: 1.8;
+  color: #5a6b7a;
+  margin: 0 0 12px;
+}
+.fc-card-meta dt {
+  float: left;
+  clear: left;
+  width: 96px;
+  color: #8b98a4;
+}
+.fc-card-meta dd {
+  margin: 0 0 0 100px;
+}
+.fc-card-actions {
+  margin-top: auto;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* 待客户提供占位 */
+.fc-pending {
+  color: #b0b8c0;
+  font-style: italic;
+}
+
+/* 按钮 */
+.fc-btn {
+  display: inline-block;
+  font-size: 13px;
+  line-height: 1;
+  padding: 10px 16px;
+  border-radius: 3px;
+  border: 1px solid #0091ea;
+  background: #0091ea;
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.fc-btn:hover {
+  background: #0277bd;
+  border-color: #0277bd;
+  color: #fff;
+}
+.fc-btn.fc-btn-ghost {
+  background: #fff;
+  color: #0277bd;
+}
+.fc-btn.fc-btn-ghost:hover {
+  background: #eef6fd;
+  color: #0277bd;
+}
+.fc-btn[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 常驻转化条 */
+.fc-cta-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  border: 1px solid #cfe4f5;
+  background: #f7fbff;
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 0 0 26px;
+}
+.fc-cta-bar .fc-cta-text {
+  font-size: 14px;
+  color: #33506b;
+}
+.fc-cta-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* 区块标题 */
+.fc-section {
+  margin: 0 0 34px;
+}
+.fc-section > h2 {
+  font-family: Raleway, "Open Sans", Arial, sans-serif;
+  font-size: 22px;
+  margin: 0 0 14px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #eef1f4;
+}
+.fc-section > h3 {
+  font-family: Raleway, "Open Sans", Arial, sans-serif;
+  font-size: 17px;
+  margin: 20px 0 10px;
+}
+
+/* 规格表 / 通用表格 */
+.fc-spec {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.fc-spec th,
+.fc-spec td {
+  border: 1px solid #e6e9ec;
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+.fc-spec th {
+  width: 260px;
+  background: #f2f2f2;
+  font-weight: 600;
+  color: #323232;
+}
+.fc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+.fc-table th,
+.fc-table td {
+  border: 1px solid #e6e9ec;
+  padding: 9px 11px;
+  text-align: left;
+}
+.fc-table thead th {
+  background: #0091ea;
+  color: #fff;
+  font-weight: 600;
+}
+.fc-table tbody tr:nth-child(even) {
+  background: #fafbfc;
+}
+
+/* 兼容型号块 */
+.fc-compat-note {
+  font-size: 12.5px;
+  line-height: 1.8;
+  color: #8b98a4;
+  margin: 10px 0 0;
+}
+
+/* 文档下载行 */
+.fc-docs {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.fc-docs li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  border: 1px solid #e6e9ec;
+  border-radius: 4px;
+  padding: 10px 14px;
+  margin: 0 0 10px;
+  font-size: 13.5px;
+}
+.fc-docs .fc-doc-type {
+  border: 1px solid #cfe4f5;
+  background: #f7fbff;
+  color: #0277bd;
+  font-size: 11.5px;
+  padding: 3px 7px;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+.fc-docs .fc-doc-size {
+  color: #8b98a4;
+  font-size: 12.5px;
+  margin-left: auto;
+}
+
+/* 表单 */
+.fc-form {
+  border: 1px solid #e6e9ec;
+  border-radius: 6px;
+  background: #fff;
+  padding: 24px;
+}
+.fc-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px 20px;
+}
+@media (max-width: 767px) {
+  .fc-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.fc-field {
+  display: flex;
+  flex-direction: column;
+}
+.fc-field.fc-field-full {
+  grid-column: 1 / -1;
+}
+.fc-label {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 0 6px;
+}
+.fc-label .fc-req {
+  color: #d32f2f;
+  margin-left: 3px;
+}
+.fc-input,
+.fc-select,
+.fc-textarea {
+  font-family: inherit;
+  font-size: 14px;
+  color: #323232;
+  border: 1px solid #d5dbe1;
+  border-radius: 3px;
+  padding: 9px 11px;
+  background: #fff;
+  width: 100%;
+  box-sizing: border-box;
+}
+.fc-input:focus,
+.fc-select:focus,
+.fc-textarea:focus {
+  outline: none;
+  border-color: #0091ea;
+}
+.fc-textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+.fc-hint {
+  font-size: 12px;
+  color: #8b98a4;
+  margin: 6px 0 0;
+}
+.fc-form-actions {
+  margin: 22px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.fc-form-result {
+  margin: 16px 0 0;
+  border-radius: 4px;
+  padding: 12px 14px;
+  font-size: 13.5px;
+  line-height: 1.8;
+}
+.fc-form-result.ok {
+  background: #eef8f1;
+  border: 1px solid #bfe3cb;
+  color: #256b3c;
+}
+.fc-form-result.warn {
+  background: #fdf7e8;
+  border: 1px solid #ecd9a5;
+  color: #7a5c12;
+}
+
+/* Cross-Reference 工具 */
+.fc-tool {
+  border: 1px solid #cfe4f5;
+  background: #f7fbff;
+  border-radius: 6px;
+  padding: 20px;
+  margin: 0 0 26px;
+}
+.fc-tool-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.fc-tool-row .fc-input {
+  flex: 2 1 260px;
+  width: auto;
+}
+.fc-tool-row .fc-select {
+  flex: 1 1 180px;
+  width: auto;
+}
+.fc-tool-empty {
+  margin: 16px 0 0;
+  font-size: 13.5px;
+  color: #55606b;
+}
+
+/* 两栏布局（详情页） */
+.fc-detail-top {
+  display: grid;
+  grid-template-columns: 46% 1fr;
+  gap: 30px;
+  margin: 0 0 32px;
+}
+@media (max-width: 991px) {
+  .fc-detail-top {
+    grid-template-columns: 1fr;
+  }
+}
+.fc-gallery-main {
+  border: 1px solid #e6e9ec;
+  border-radius: 6px;
+  background: #f5f7f9;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.fc-gallery-main img {
+  max-width: 88%;
+  max-height: 88%;
+}
+.fc-summary-line {
+  font-size: 13.5px;
+  line-height: 2;
+  color: #55606b;
+  margin: 12px 0 0;
+}
+.fc-summary-line b {
+  color: #323232;
+}
+.fc-actions-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 18px 0 0;
+}
+
+/* 空状态 */
+.fc-empty {
+  border: 1px dashed #d5dbe1;
+  border-radius: 6px;
+  padding: 22px;
+  color: #8b98a4;
+  font-size: 13.5px;
+  text-align: center;
+}
+
+/* ============================================================
+   2026-10-10 中英文双语改造补充
+   - fc-card-sub：产品卡片上型号下方的一行小字（系列标题）
+   - 中文站排版微调：仅在 html[lang="zh-CN"] 下生效，不影响英文站
+   ============================================================ */
+.fc-card-sub {
+  font-size: 12.5px;
+  color: #7e7e7a;
+  margin: -6px 0 10px;
+}
+html[lang="zh-CN"] .fc-page,
+html[lang="zh-CN"] .fc-page h1,
+html[lang="zh-CN"] .fc-page h2,
+html[lang="zh-CN"] .fc-page h3 {
+  font-family: "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", Arial, sans-serif;
+  letter-spacing: 0;
+}
+
+/* ==========================================================================
+   滤芯栏目 · 视觉升级 v2（2026-10-10）
+
+   改动原则：
+   - 只在 .fc-page 作用域内工作，不碰站点原有 class，不影响克隆页；
+   - 一律使用 fc- 前缀，避免与主题样式打架；
+   - 以「工业 B2B 目录」为基调：冷灰底 + 深蓝强调色 + 表格化信息，少用装饰；
+   - 客户选定参考站后可只改这里的 --fc-* 变量换皮肤，不动结构。
+   ========================================================================== */
+
+.fc-page {
+  --fc-accent: #0b4f8a;
+  --fc-accent-dark: #083c6b;
+  --fc-accent-soft: #eef4fa;
+  --fc-ink: #1c2530;
+  --fc-ink-soft: #5b6875;
+  --fc-line: #dfe4ea;
+  --fc-line-soft: #edf0f4;
+  --fc-bg-soft: #f7f9fb;
+  --fc-radius: 10px;
+  --fc-radius-sm: 6px;
+  --fc-shadow: 0 1px 2px rgba(16, 32, 48, 0.06), 0 8px 24px rgba(16, 32, 48, 0.06);
+  --fc-shadow-hover: 0 2px 4px rgba(16, 32, 48, 0.08), 0 14px 34px rgba(16, 32, 48, 0.12);
+  color: var(--fc-ink);
+}
+
+.fc-page .fc-section {
+  margin: 0 0 44px;
+}
+
+/* 区块标题：左侧短竖条，替代纯文字标题 */
+.fc-page .fc-section > h2 {
+  position: relative;
+  padding-left: 14px;
+  margin: 0 0 14px;
+  font-size: 24px;
+  line-height: 1.35;
+  letter-spacing: -0.2px;
+}
+
+.fc-page .fc-section > h2::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 4px;
+  width: 4px;
+  border-radius: 2px;
+  background: var(--fc-accent);
+}
+
+.fc-page .fc-lede {
+  color: var(--fc-ink-soft);
+  line-height: 1.75;
+  max-width: 78ch;
+}
+
+/* ---------------------------------------------------------------- 页头 / chips */
+.fc-page .fc-head {
+  padding: 4px 0 18px;
+  border-bottom: 1px solid var(--fc-line-soft);
+  margin-bottom: 22px;
+}
+
+.fc-page .fc-head h1 {
+  margin: 0 0 10px;
+  font-size: 34px;
+  line-height: 1.25;
+  letter-spacing: -0.4px;
+}
+
+.fc-page .fc-chip {
+  display: inline-block;
+  padding: 5px 11px;
+  margin: 0 8px 8px 0;
+  border: 1px solid var(--fc-line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--fc-ink-soft);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* -------------------------------------------------------------------- CTA 条 */
+.fc-page .fc-cta-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  margin: 0 0 34px;
+  border: 1px solid var(--fc-line);
+  border-left: 4px solid var(--fc-accent);
+  border-radius: var(--fc-radius);
+  background: linear-gradient(180deg, #ffffff, var(--fc-bg-soft));
+  box-shadow: var(--fc-shadow);
+}
+
+.fc-page .fc-cta-text {
+  color: var(--fc-ink-soft);
+  line-height: 1.6;
+  flex: 1 1 320px;
+}
+
+.fc-page .fc-cta-text b {
+  color: var(--fc-ink);
+}
+
+.fc-page .fc-cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* ---------------------------------------------------------------------- 按钮 */
+.fc-page .fc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: 1px solid var(--fc-accent);
+  border-radius: var(--fc-radius-sm);
+  background: var(--fc-accent);
+  color: #fff !important;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-decoration: none;
+  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.fc-page .fc-btn:hover {
+  background: var(--fc-accent-dark);
+  border-color: var(--fc-accent-dark);
+  box-shadow: 0 6px 16px rgba(11, 79, 138, 0.22);
+  transform: translateY(-1px);
+}
+
+.fc-page .fc-btn-ghost {
+  background: #fff;
+  color: var(--fc-accent) !important;
+  border-color: var(--fc-line);
+}
+
+.fc-page .fc-btn-ghost:hover {
+  background: var(--fc-accent-soft);
+  border-color: var(--fc-accent);
+  color: var(--fc-accent-dark) !important;
+}
+
+.fc-page .fc-btn.is-disabled,
+.fc-page .fc-btn[disabled] {
+  background: var(--fc-bg-soft);
+  border-color: var(--fc-line);
+  color: var(--fc-ink-soft) !important;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.fc-page .fc-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+/* ----------------------------------------------------------------------- 卡片 */
+.fc-page .fc-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+.fc-page .fc-grid-4 {
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+
+.fc-page .fc-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--fc-line);
+  border-radius: var(--fc-radius);
+  background: #fff;
+  overflow: hidden;
+  transition: box-shadow 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
+}
+
+.fc-page .fc-card:hover {
+  border-color: #cfd8e2;
+  box-shadow: var(--fc-shadow-hover);
+  transform: translateY(-2px);
+}
+
+.fc-page .fc-card-flat {
+  box-shadow: none;
+}
+
+.fc-page .fc-card-flat:hover {
+  transform: none;
+  box-shadow: var(--fc-shadow);
+}
+
+.fc-page .fc-card-media {
+  display: block;
+  background: var(--fc-bg-soft);
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.fc-page .fc-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 10px;
+  box-sizing: border-box;
+  transition: transform 0.25s ease;
+}
+
+.fc-page .fc-card:hover .fc-card-media img {
+  transform: scale(1.03);
+}
+
+.fc-page .fc-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 18px 18px;
+}
+
+.fc-page .fc-card-title {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.4;
+}
+
+.fc-page .fc-card-title a {
+  color: var(--fc-ink);
+  text-decoration: none;
+}
+
+.fc-page .fc-card-title a:hover {
+  color: var(--fc-accent);
+}
+
+.fc-page .fc-card-sub {
+  margin: 0;
+  color: var(--fc-ink-soft);
+  font-size: 13px;
+}
+
+.fc-page .fc-card-meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  margin: 0;
+  font-size: 13.5px;
+}
+
+.fc-page .fc-card-meta dt {
+  color: var(--fc-ink-soft);
+}
+
+.fc-page .fc-card-meta dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.fc-page .fc-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--fc-line-soft);
+}
+
+.fc-page .fc-step-index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--fc-accent-soft);
+  color: var(--fc-accent-dark);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* ------------------------------------------------------------------ 规格表 */
+.fc-page .fc-spec {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--fc-line);
+  border-radius: var(--fc-radius);
+  overflow: hidden;
+  background: #fff;
+  font-size: 14.5px;
+}
+
+.fc-page .fc-spec th,
+.fc-page .fc-spec td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--fc-line-soft);
+  text-align: left;
+  vertical-align: top;
+}
+
+.fc-page .fc-spec th {
+  width: 34%;
+  background: var(--fc-bg-soft);
+  color: var(--fc-ink-soft);
+  font-weight: 600;
+}
+
+.fc-page .fc-spec tr:last-child th,
+.fc-page .fc-spec tr:last-child td {
+  border-bottom: 0;
+}
+
+.fc-page .fc-spec tbody tr:nth-child(even) td {
+  background: #fcfdfe;
+}
+
+.fc-page .fc-spec tfoot .fc-spec-note,
+.fc-page .fc-spec tfoot .fc-spec-note-label {
+  background: var(--fc-accent-soft);
+  color: var(--fc-accent-dark);
+  font-size: 13px;
+}
+
+.fc-page .fc-cert-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fc-page .fc-cert-list li {
+  padding: 5px 12px;
+  border: 1px solid var(--fc-line);
+  border-radius: 999px;
+  font-size: 13px;
+}
+
+/* --------------------------------------------------------------- 画廊 / 灯箱 */
+.fc-page .fc-detail-top {
+  display: grid;
+  grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+  margin: 0 0 40px;
+}
+
+@media (max-width: 900px) {
+  .fc-page .fc-detail-top {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+}
+
+.fc-page .fc-gallery-main {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 1px solid var(--fc-line);
+  border-radius: var(--fc-radius);
+  background: var(--fc-bg-soft);
+  cursor: zoom-in;
+  overflow: hidden;
+}
+
+.fc-page .fc-gallery-main img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  padding: 14px;
+  box-sizing: border-box;
+}
+
+.fc-page .fc-gallery-zoom {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(28, 37, 48, 0.72);
+  color: #fff;
+  font-size: 12px;
+}
+
+.fc-page .fc-gallery-thumbs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.fc-page .fc-gallery-thumbs button {
+  padding: 0;
+  border: 1px solid var(--fc-line);
+  border-radius: var(--fc-radius-sm);
+  background: #fff;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.fc-page .fc-gallery-thumbs button.is-active {
+  border-color: var(--fc-accent);
+  box-shadow: 0 0 0 2px rgba(11, 79, 138, 0.16);
+}
+
+.fc-page .fc-gallery-thumbs img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+.fc-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4vmin;
+  background: rgba(12, 18, 26, 0.86);
+  cursor: zoom-out;
+}
+
+.fc-lightbox img {
+  max-width: 92vw;
+  max-height: 86vh;
+  object-fit: contain;
+  background: #fff;
+  border-radius: var(--fc-radius, 10px);
+  padding: 12px;
+}
+
+.fc-lightbox-close {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  padding: 8px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 999px;
+  background: transparent;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* ----------------------------------------------------------------- 规格书入口 */
+.fc-page .fc-doc-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  color: var(--fc-accent);
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.fc-page .fc-doc-link.is-pending {
+  color: var(--fc-ink-soft);
+  font-weight: 500;
+  cursor: default;
+}
+
+.fc-page .fc-doc-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 7px;
+  border-radius: 4px;
+  background: #eef1f5;
+  color: #b23b3b;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+
+.fc-page .fc-docs li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--fc-line-soft);
+  border-radius: var(--fc-radius-sm);
+  background: #fff;
+  margin-bottom: 8px;
+}
+
+.fc-page .fc-doc-type {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--fc-accent-soft);
+  color: var(--fc-accent-dark);
+  font-size: 12px;
+}
+
+/* -------------------------------------------------------------------- 表单 */
+.fc-page .fc-form {
+  padding: 22px;
+  border: 1px solid var(--fc-line);
+  border-radius: var(--fc-radius);
+  background: #fff;
+  box-shadow: var(--fc-shadow);
+}
+
+.fc-page .fc-form-compact {
+  max-width: 900px;
+}
+
+.fc-page .fc-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px 18px;
+}
+
+.fc-page .fc-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fc-page .fc-field-full {
+  grid-column: 1 / -1;
+}
+
+.fc-page .fc-label {
+  color: var(--fc-ink-soft);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.fc-page .fc-req {
+  color: #b23b3b;
+  margin-left: 2px;
+}
+
+.fc-page .fc-input,
+.fc-page .fc-select,
+.fc-page .fc-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--fc-line);
+  border-radius: var(--fc-radius-sm);
+  background: #fff;
+  color: var(--fc-ink);
+  font-size: 14.5px;
+  line-height: 1.5;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.fc-page .fc-textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.fc-page .fc-input:focus,
+.fc-page .fc-select:focus,
+.fc-page .fc-textarea:focus {
+  outline: none;
+  border-color: var(--fc-accent);
+  box-shadow: 0 0 0 3px rgba(11, 79, 138, 0.14);
+}
+
+.fc-page .fc-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--fc-line-soft);
+}
+
+.fc-page .fc-inline-link {
+  margin-left: auto;
+  color: var(--fc-accent);
+  font-size: 13.5px;
+  text-decoration: underline;
+}
+
+.fc-page .fc-form-result {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: var(--fc-radius-sm);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.fc-page .fc-form-result.ok {
+  border: 1px solid #b7ddc2;
+  background: #f2fbf5;
+  color: #1d6b3a;
+}
+
+.fc-page .fc-form-result.warn {
+  border: 1px solid #f0d3a8;
+  background: #fff9ef;
+  color: #8a5a12;
+}
+
+/* -------------------------------------------------------------- 底部询价区 */
+.fc-page .fc-inquiry {
+  padding: 26px;
+  border: 1px solid var(--fc-line);
+  border-radius: var(--fc-radius);
+  background: linear-gradient(180deg, #ffffff, var(--fc-bg-soft));
+  box-shadow: var(--fc-shadow);
+}
+
+.fc-page .fc-inquiry .fc-form {
+  box-shadow: none;
+  margin-top: 16px;
+}
+
+.fc-page .fc-pending {
+  color: #9a6a12;
+}
+
+.fc-page .fc-hint {
+  color: var(--fc-ink-soft);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* ------------------------------------------------------------------- 移动端 */
+@media (max-width: 720px) {
+  .fc-page .fc-head h1 {
+    font-size: 26px;
+  }
+
+  .fc-page .fc-section > h2 {
+    font-size: 20px;
+  }
+
+  .fc-page .fc-cta-bar,
+  .fc-page .fc-inquiry {
+    padding: 16px;
+  }
+
+  .fc-page .fc-spec th {
+    width: 40%;
+  }
+}

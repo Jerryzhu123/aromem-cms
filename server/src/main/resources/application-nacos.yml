@@ -1,0 +1,26 @@
+# ============================================================================
+#  Nacos 配置中心 profile（可选）
+#
+#  用法：mvn spring-boot:run -Dspring-boot.run.profiles=dev,nacos
+#
+#  前置条件：本机要有一个 Nacos 服务端在跑（默认 127.0.0.1:8848，
+#  gRPC 走 9848）。Nacos 是独立中间件，没有它就别加这个 profile ——
+#  否则客户端会持续重连刷错误日志。
+#
+#  Spring Cloud Alibaba 2025.x 起**移除了 bootstrap 配置方式**，
+#  统一用 spring.config.import（见官方版本发布说明）。
+#  optional: 前缀保证「Nacos 里没有这个 dataId」时不阻断启动。
+# ============================================================================
+spring:
+  config:
+    import:
+      - optional:nacos:${spring.application.name}.yaml
+  cloud:
+    nacos:
+      config:
+        enabled: true
+        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+        file-extension: yaml
+        # 拉不到远程配置时只告警，不阻断启动
+        import-check:
+          enabled: false

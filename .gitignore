@@ -1,0 +1,15 @@
+# 依赖与产物不入库
+node_modules/
+.next/
+dist/
+target/
+*.log
+
+# 前台的大体积媒体（生产由后端 /media 统一供图）
+cloner/public/static/
+cloner/public/ueditor/
+cloner/public/uploads/
+
+# 本地杂项
+.workbuddy/
+*.bak

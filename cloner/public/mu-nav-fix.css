@@ -1,0 +1,115 @@
+/*
+ * 页头导航排版修复（2026-10-11）
+ *
+ * 源站导航是行内块排版（.mu-navbar-nav{display:block;text-align:right} + li{display:inline-block}），
+ * 一旦总宽度超出一行，右侧的「获取报价 / 语言」就会被挤到第二行。
+ * 英文标签比中文宽约 40%，所以只有英文会掉行 —— 中文正常、英文难看。
+ *
+ * 这里的处理：
+ *   - ≥992px 把导航行改成 flex 且 nowrap，右侧操作区用 margin-left:auto 定位，
+ *     不再依赖那 10 个 &nbsp; 占位，中英文间距一致；
+ *   - 英文单独缩字号与内边距，让它和中文一样只占一行；
+ *   - 英文在 1199px 以下提前收成汉堡，而不是硬挤成两行。
+ * 只在页头作用域内生效（#mu-hero），不动源站样式表。
+ */
+@media (min-width: 992px) {
+  #mu-hero .mu-navbar {
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+  #mu-hero .mu-navbar .navbar-collapse {
+    display: flex !important;
+    flex-wrap: nowrap;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+  }
+  #mu-hero .mu-navbar-nav {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-end;
+    width: auto;
+    flex: 1 1 auto;
+    min-width: 0;
+    text-align: right;
+  }
+  #mu-hero .mu-navbar-nav > li {
+    display: block;
+  }
+  #mu-hero .mu-navbar-nav li a {
+    white-space: nowrap;
+  }
+  #mu-hero .mu-navbar .mu-logo {
+    flex: 0 0 auto;
+    margin-right: 8px;
+  }
+  /* 右侧操作区：始终贴在行尾，自己不换行也不被压扁 */
+  #mu-hero .mu-navbar-nav > li.mu-quote {
+    margin-left: auto;
+    flex: 0 0 auto;
+  }
+  #mu-hero .mu-navbar-nav > li.mu-lang {
+    margin-left: 6px;
+    flex: 0 0 auto;
+  }
+  #mu-hero .mu-quote-btn {
+    display: inline-block;
+    padding: 9px 15px;
+    border-radius: 3px;
+    background: #0091ea;
+    color: #fff !important;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  #mu-hero .mu-quote-btn:hover,
+  #mu-hero .mu-quote-btn:focus {
+    background: #007bbd;
+    color: #fff !important;
+  }
+  /* 英文比中文宽：同字号下永远多占一行，所以单独压缩 */
+  #mu-hero[data-lang="en"] .mu-navbar-nav > li > a {
+    font-size: 13px;
+    letter-spacing: 0;
+    padding-left: 11px;
+    padding-right: 11px;
+  }
+  #mu-hero[data-lang="en"] .mu-quote-btn {
+    font-size: 13px;
+    padding: 9px 13px;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1439.98px) {
+  #mu-hero[data-lang="en"] .mu-navbar-nav > li > a {
+    font-size: 12px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  #mu-hero[data-lang="en"] .mu-navbar-nav > li.mu-lang > a {
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+}
+
+/* 英文提前收成汉堡（Bootstrap 默认要到 992px 以下才收，对英文太晩） */
+@media (max-width: 1199.98px) {
+  #mu-hero[data-lang="en"] .mu-navbar {
+    flex-wrap: wrap;
+  }
+  #mu-hero[data-lang="en"] .mu-navbar .navbar-collapse {
+    display: none !important;
+    flex-basis: 100%;
+  }
+  #mu-hero[data-lang="en"] .mu-navbar .navbar-collapse.show {
+    display: block !important;
+  }
+  #mu-hero[data-lang="en"] .mu-navbar .navbar-toggler {
+    display: block;
+  }
+  #mu-hero[data-lang="en"] .mu-navbar .mu-logo {
+    margin-right: auto;
+  }
+}

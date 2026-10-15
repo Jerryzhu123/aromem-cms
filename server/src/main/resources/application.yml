@@ -1,0 +1,117 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: aromem-cms-server
+  profiles:
+    active: dev
+
+  # Nacos 配置中心接入点（SCA nacos-config 必需声明 spring.config.import，否则启动检查直接失败）。
+  # optional: 前缀 = 没有 Nacos 服务端时不阻断启动（与 §8 的约束一致）。
+  # 客户端本身默认禁用（不重连、不刷日志）；需要时启用 nacos profile：
+  #   java -jar app.jar --spring.profiles.active=dev,nacos
+  config:
+    import:
+      - optional:nacos:aromem-cms-server.yml
+  cloud:
+    nacos:
+      config:
+        enabled: false
+
+  # Java 21 虚拟线程：每个请求一个虚拟线程，阻塞式 JDBC 下吞吐更好
+  threads:
+    virtual:
+      enabled: true
+
+  # Spring Cloud Alibaba：按需求「只引入 nacos-config，不引入全套 SCA 组件」，
+  # pom 里只有 spring-cloud-starter-alibaba-nacos-config 这一个 SCA 依赖。
+  #
+  # 但 Nacos 是需要独立服务端的中间件。默认（dev）**不激活** Nacos 客户端，
+  # 否则没起 Nacos 时会持续刷 "Server check fail, please check server 127.0.0.1,
+  # port 9848" 把日志淹掉。需要用时加上 nacos profile 即可：
+  #
+  #   mvn spring-boot:run -Dspring-boot.run.profiles=dev,nacos
+  #
+  # 具体配置见 application-nacos.yml。
+
+  datasource:
+    # MySQL 8.4.8（本机 3306）。业务账号 aromem_user 仅授权 aromem_cms 库，
+    # 禁止业务代码使用 root。allowPublicKeyRetrieval 是 caching_sha2_password
+    # 在非 SSL 连接下必需的，少了会报 "Public Key Retrieval is not allowed"。
+    # JDBC 层 characterEncoding 只接受 Java 编码名（UTF-8），Connector/J 8 会自动
+    # 协商到 MySQL 的 utf8mb4；连接串里写 utf8mb4 会报 "Unsupported character encoding"。
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 10000
+
+  jpa:
+    # 库表由 Flyway 负责，Hibernate 不碰 schema。
+    # 用 validate 能在启动时发现实体与表结构漂移；若因 MySQL 类型细节误报，
+    # 可临时改为 none（见 README 的排查说明）。
+    hibernate:
+      ddl-auto: validate
+    # 关掉 open-in-view：避免「视图层持有 Session」这个反模式
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: Asia/Shanghai
+        format_sql: false
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  servlet:
+    multipart:
+      # 视频文件放宽到 100MB；超限会抛 MaxUploadSizeExceededException，
+      # 由 GlobalExceptionHandler 转成业务码 4002
+      max-file-size: 100MB
+      max-request-size: 120MB
+      file-size-threshold: 2MB
+
+  jackson:
+    time-zone: Asia/Shanghai
+    default-property-inclusion: non_null
+
+app:
+  storage:
+    # 媒体实体文件目录（相对后端进程工作目录）。硬约束：文件不入库。
+    root: backend-storage/public-media
+    url-prefix: /media
+  importer:
+    # P1 一次性导入。默认关闭；执行：
+    #   mvn spring-boot:run -Dspring-boot.run.arguments=--app.importer.enabled=true
+    # 导入幂等，重复执行安全。数据源：classpath:import/{content,home,nav}.json
+    enabled: false
+    # 前端静态资源目录（存量媒体来源，文件会复制进 app.storage.root 并登记元数据）
+    frontend-public: ../cloner/public
+  security:
+    # 管理端鉴权：JWT 已接入（P4）。
+    #   true  = 开发联调模式，全部放行（本地默认）
+    #   false = 生产模式：/api/v1/admin/** 与 /api/upload/** 需要 Bearer JWT
+    permit-write-endpoints: true
+    # JWT 签名密钥：生产必须用环境变量覆盖为 32 字节以上随机串
+    jwt-secret: ${AROMEM_JWT_SECRET}
+    jwt-ttl: PT24H
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+
+logging:
+  level:
+    root: info
+    com.aromem.cms: debug

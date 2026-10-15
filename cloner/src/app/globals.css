@@ -1,0 +1,231 @@
+/*
+ * The visual foundation of this project is the ORIGINAL stylesheet set of
+ * aromem.com. It is served verbatim from /public/static/index/css/ and linked
+ * in the root layout (bootstrap + slick + magnific-popup + the template's own
+ * style.css / mystyle.css / down.css). Nothing from Tailwind is imported on
+ * purpose: Tailwind's preflight would reset Bootstrap's base styles and break
+ * the 1:1 reproduction.
+ *
+ * Only clone-specific corrections belong in this file.
+ */
+
+/* Keep the document from gaining a horizontal scrollbar because of the
+   absolutely positioned carousel arrows / wide CMS tables. */
+html,
+body {
+  overflow-x: hidden;
+}
+
+/* CMS rich-text content (product / project / news bodies) occasionally carries
+   fixed-width tables that are wider than a phone screen. */
+.cloned-content table {
+  max-width: 100%;
+}
+
+.cloned-content img {
+  height: auto;
+}
+
+/* The original news carousel is a fixed 450px jQuery slider. The React rebuild
+   measures its own container instead (see components/home/NewsCarousel.tsx) so
+   it can shrink on phones, hence no width override is needed here. */
+
+/* ---------------------------------------------------------------------------
+ * Home page "产品中心" grid — CSS Grid, 3 columns × n rows on desktop
+ *
+ * On the source site this grid is produced by filterizr, which measures every
+ * tile, computes a grid and writes the result back as inline
+ * `position: absolute` + explicit widths. That is why `style.css` gives
+ * `.filtr-container` no rules at all, and why the tiles carry Bootstrap
+ * `col-*` classes that never actually lay anything out — filterizr positioned
+ * them absolutely, so there was no flex/grid parent to resolve against.
+ *
+ * The clone reimplements the filtering in React (ProductFilterGrid.tsx) and
+ * does not ship filterizr, so the layout is done with CSS Grid instead. The
+ * Bootstrap `col-*` classes have been removed from the markup: without a grid
+ * context they only added `width: 100%` + 15px gutters that fought the grid.
+ *
+ * Column counts are pinned per breakpoint rather than derived from
+ * `repeat(auto-fit, minmax(...))`, because the goal is to reproduce the source's
+ * exact 3-column desktop layout — auto-fit would pick its own column count from
+ * the container width and drift away from it.
+ *
+ * Spacing still comes from the tiles' own `padding: 16px` (style.css), so the
+ * grid gap stays 0: that keeps the visual gutter between two tiles at 32px and
+ * the outer margin at 16px, exactly as on the source site — and it keeps the
+ * absolutely positioned hover overlay (`.mu-filter-item-content`, inset 16px)
+ * flush with the image.
+ * ------------------------------------------------------------------------- */
+.filtr-container {
+  display: grid;
+  grid-template-columns: 1fr; /* phones: 1 column */
+}
+
+.filtr-container .filtr-item {
+  position: relative; /* containing block for the hover overlay */
+  min-width: 0; /* grid items default to min-width:auto, which overflows */
+}
+
+@media (min-width: 576px) {
+  .filtr-container {
+    grid-template-columns: repeat(2, 1fr); /* tablets: 2 columns */
+  }
+}
+
+@media (min-width: 768px) {
+  .filtr-container {
+    grid-template-columns: repeat(3, 1fr); /* desktop: 3 columns */
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Responsive images
+ *
+ * The template's own rule is `img { max-width: 100% }` (style.css) — it is
+ * missing the other half of the standard pair. Bootstrap's `.img-fluid` is
+ * literally `max-width: 100%; height: auto`, and the markup here even carries
+ * the (Bootstrap 3 era, dead in BS4) `img-responsive` class, so `height: auto`
+ * is clearly what the original intended but never got.
+ *
+ * Without it, the ~96 images that carry a `height` attribute keep that fixed
+ * pixel height while `max-width` shrinks their width, so they are squashed out
+ * of proportion as soon as they are scaled down.
+ * ------------------------------------------------------------------------- */
+img {
+  height: auto;
+}
+
+/* The news carousel forces a 450x300 (3:2) box on every slide image through
+   width/height attributes. Scaled down on a phone, the fixed height squashed
+   the image to a *different* ratio than the desktop box (345x300 = 1.15 vs
+   1.5). Pinning the box ratio keeps the source's framing at every width
+   instead of drifting. */
+#show-area1 img {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+}
+
+/* The video overlay ships a fixed 800px-wide <video>, which overflows any
+   phone or tablet once the overlay is opened. */
+.mu-video-iframe-area video {
+  width: 100%;
+  max-width: 800px;
+  height: auto;
+}
+
+/* The 工程实例 cards carry `width="350" height="200"`, and the source forces
+   that box — squashing images whose natural ratio is not 350:200. Pinning the
+   ratio keeps the source's desktop framing byte-for-byte (350x200), while on a
+   phone the card content is 70% wide (the source's own `max-width: 991px` rule)
+   so the image scales to 252x144 — the same framing, just smaller, instead of
+   being squashed to a different ratio. */
+.mu-single-service-content img {
+  width: 100%;
+  max-width: 350px;
+  aspect-ratio: 350 / 200;
+}
+
+/* ---------------------------------------------------------------------------
+ * Product tile link
+ *
+ * `.mu-imglink` is inline in the source and wraps a block-level overlay
+ * (`.mu-filter-item-content`), so its inline box fragments and its bounding box
+ * collapses to a single line (~20px) even though the image inside is 259px tall.
+ * Clicks still work, but the link's own box does not cover its content — bad for
+ * focus rings and for anything measuring the hit area. Making it a block gives
+ * the link a box that matches its content; the image is the only in-flow child,
+ * so the rendered tile is unchanged.
+ * ------------------------------------------------------------------------- */
+.mu-imglink {
+  display: block;
+}
+
+/* ---------------------------------------------------------------------------
+ * Product tile fixed frame + missing-image placeholder
+ *
+ * Product images come from the ADP backend and may be missing (empty cover URL
+ * or a 404 path). Two rules keep the grid stable when that happens:
+ *
+ * 1. Every tile image lives in a fixed 7:5 box. The source thumbs are all
+ *    between 1.38 and 1.41 ratio (6566x4742 / 1200x850 / 1380x997), so 7:5
+ *    (1.4) letterboxes them by at most ~2px — visually identical to the
+ *    natural layout — while a failed/empty image reserves exactly the same
+ *    box instead of collapsing the tile (which previously let the blue hover
+ *    overlay swallow the whole cell, see the screenshot of 2026-10-03).
+ *
+ * 2. The swapped-in placeholder (/images/product-placeholder.svg) is drawn at
+ *    the same 7:5 ratio, so the swap itself causes zero layout shift.
+ * ------------------------------------------------------------------------- */
+.filtr-container .mu-imglink img {
+  width: 100%;
+  aspect-ratio: 7 / 5;
+  object-fit: contain;
+  background: #ffffff;
+}
+
+/* ---------------------------------------------------------------------------
+ * Product grid pagination (3 columns × 3 rows = 9 per page)
+ *
+ * Styled after the template's own filter controls: neutral gray text that
+ * turns template blue (#0091ea) on hover, solid blue for the active page.
+ * ------------------------------------------------------------------------- */
+.mu-product-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.mu-product-pagination button {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid #e3e8ee;
+  background: #ffffff;
+  color: #323232;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.mu-product-pagination button:hover:not(:disabled):not(.active) {
+  border-color: #0091ea;
+  color: #0091ea;
+}
+
+.mu-product-pagination button.active {
+  background: #0091ea;
+  border-color: #0091ea;
+  color: #ffffff;
+}
+
+.mu-product-pagination button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ---------------------------------------------------------------------------
+ * Touch targets
+ *
+ * The source's text links are ~19px tall — below the 24px minimum recommended
+ * for touch (WCAG 2.5.8). Instead of changing typography or spacing (which would
+ * move away from the source's design), the hit area is extended with an
+ * absolutely positioned pseudo-element. Nothing visual changes; only the
+ * tappable area grows, and the ±5px stays inside the existing 30px list spacing
+ * so neighbouring links never overlap.
+ * ------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .mu-useful-links a,
+  .mu-breadcrumb a {
+    position: relative;
+  }
+
+  .mu-useful-links a::after,
+  .mu-breadcrumb a::after {
+    content: "";
+    position: absolute;
+    inset: -5px 0;
+  }
+}

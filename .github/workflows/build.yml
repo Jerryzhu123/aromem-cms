@@ -1,0 +1,48 @@
+name: build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build-cloner:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: 安装依赖并构建官网前台
+        working-directory: cloner
+        run: |
+          npm ci --no-audit --no-fund || npm install --no-audit --no-fund
+          npm run build
+      - name: 打包运行时产物
+        working-directory: cloner
+        run: tar -czf ../../cloner-runtime.tar.gz .next node_modules package.json next.config.ts public
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cloner-runtime
+          path: cloner-runtime.tar.gz
+          retention-days: 7
+
+  build-adp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: 安装 pnpm
+        run: npm install -g pnpm@9
+      - name: 安装依赖并构建管理后台
+        working-directory: ADP
+        run: |
+          pnpm install --ignore-scripts --no-frozen-lockfile
+          pnpm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: adp-dist
+          path: ADP/dist/
+          retention-days: 7

@@ -1,0 +1,188 @@
+- generic [active] [ref=f1e1]:
+  - banner [ref=f1e2]:
+    - navigation [ref=f1e4]:
+      - link [ref=f1e5] [cursor=pointer]:
+        - /url: /
+        - img "苏瑞膜 SURO" [ref=f1e6]
+      - text: 
+      - list [ref=f1e8]:
+        - listitem [ref=f1e9]:
+          - link "首页" [ref=f1e10] [cursor=pointer]:
+            - /url: /
+        - listitem [ref=f1e11]:
+          - button "产品中心" [ref=f1e12] [cursor=pointer]
+        - listitem [ref=f1e13]:
+          - button "工程实例" [ref=f1e14] [cursor=pointer]
+        - listitem [ref=f1e15]:
+          - link "新闻资讯" [ref=f1e16] [cursor=pointer]:
+            - /url: /news_list
+        - listitem [ref=f1e17]:
+          - button "下载中心" [ref=f1e18] [cursor=pointer]
+        - listitem [ref=f1e19]:
+          - button "关于我们" [ref=f1e20] [cursor=pointer]
+        - listitem [ref=f1e21]:
+          - link "加入我们" [ref=f1e22] [cursor=pointer]:
+            - /url: /join
+        - listitem [ref=f1e23]
+        - listitem [ref=f1e24]:
+          - button "语言" [ref=f1e25] [cursor=pointer]
+  - generic [ref=f1e30]:
+    - heading [level=1]
+  - navigation "breadcrumb" [ref=f1e35]:
+    - list [ref=f1e36]:
+      - listitem [ref=f1e37]:
+        - link "首页" [ref=f1e38] [cursor=pointer]:
+          - /url: /
+      - listitem [ref=f1e39]: / 产品中心-SURO®膜性能优势-SURO®膜性能优势
+  - generic:
+    - main:
+      - generic [ref=f1e45]:
+        - generic [ref=f1e48]:
+          - heading "产品中心" [level=2] [ref=f1e49]
+          - list [ref=f1e50]:
+            - listitem [ref=f1e51]:
+              - generic [aria-hidden] [ref=f1e52]: 
+              - strong [ref=f1e53]: SURO®膜性能优势
+              - list [ref=f1e54]:
+                - listitem [ref=f1e55]:
+                  - link "SURO®膜性能优势" [ref=f1e56] [cursor=pointer]:
+                    - /url: /products?id=22
+                    - generic [aria-hidden] [ref=f1e57]: 
+                    - text: SURO®膜性能优势
+            - listitem [ref=f1e58]:
+              - generic [aria-hidden] [ref=f1e59]: 
+              - strong [ref=f1e60]: SURO®反渗透与纳滤膜元件
+              - list [ref=f1e61]:
+                - listitem [ref=f1e62]:
+                  - link "海水淡化膜元件系列" [ref=f1e63] [cursor=pointer]:
+                    - /url: /products?id=19
+                    - generic [aria-hidden] [ref=f1e64]: 
+                    - text: 海水淡化膜元件系列
+                - listitem [ref=f1e65]:
+                  - link "苦咸水膜元件" [ref=f1e66] [cursor=pointer]:
+                    - /url: /products?id=9
+                    - generic [aria-hidden] [ref=f1e67]: 
+                    - text: 苦咸水膜元件
+                - listitem [ref=f1e68]:
+                  - link "低能耗苦咸水膜元件系列" [ref=f1e69] [cursor=pointer]:
+                    - /url: /products?id=16
+                    - generic [aria-hidden] [ref=f1e70]: 
+                    - text: 低能耗苦咸水膜元件系列
+                - listitem [ref=f1e71]:
+                  - link "超低压膜元件" [ref=f1e72] [cursor=pointer]:
+                    - /url: /products?id=7
+                    - generic [aria-hidden] [ref=f1e73]: 
+                    - text: 超低压膜元件
+                - listitem [ref=f1e74]:
+                  - link "极低压膜元件" [ref=f1e75] [cursor=pointer]:
+                    - /url: /products?id=5
+                    - generic [aria-hidden] [ref=f1e76]: 
+                    - text: 极低压膜元件
+                - listitem [ref=f1e77]:
+                  - link "特种分离反渗透膜元件系列" [ref=f1e78] [cursor=pointer]:
+                    - /url: /products?id=25
+                    - generic [aria-hidden] [ref=f1e79]: 
+                    - text: 特种分离反渗透膜元件系列
+                - listitem [ref=f1e80]:
+                  - link "纳滤膜元件系列" [ref=f1e81] [cursor=pointer]:
+                    - /url: /products?id=11
+                    - generic [aria-hidden] [ref=f1e82]: 
+                    - text: 纳滤膜元件系列
+                - listitem [ref=f1e83]:
+                  - link "特种分离纳滤膜元件系列" [ref=f1e84] [cursor=pointer]:
+                    - /url: /products?id=26
+                    - generic [aria-hidden] [ref=f1e85]: 
+                    - text: 特种分离纳滤膜元件系列
+                - listitem [ref=f1e86]:
+                  - link "碟管式膜组件系列" [ref=f1e87] [cursor=pointer]:
+                    - /url: /products?id=24
+                    - generic [aria-hidden] [ref=f1e88]: 
+                    - text: 碟管式膜组件系列
+                - listitem [ref=f1e89]:
+                  - link "小尺寸反渗透膜元件性能参数" [ref=f1e90] [cursor=pointer]:
+                    - /url: /products?id=15
+                    - generic [aria-hidden] [ref=f1e91]: 
+                    - text: 小尺寸反渗透膜元件性能参数
+                - listitem [ref=f1e92]:
+                  - link "家用膜系列元件" [ref=f1e93] [cursor=pointer]:
+                    - /url: /products?id=13
+                    - generic [aria-hidden] [ref=f1e94]: 
+                    - text: 家用膜系列元件
+        - article [ref=f1e97]:
+          - paragraph [ref=f1e98]:
+            - strong [ref=f1e99]: SURO®
+            - strong [ref=f1e100]: 膜性能优势
+          - paragraph [ref=f1e101]:
+            - img "SURO® 膜性能优势.png" [ref=f1e102]
+          - paragraph [ref=f1e103]:
+            - strong [ref=f1e105]: 余氯造成膜片氧化的化学原理
+          - paragraph [ref=f1e106]:
+            - strong [ref=f1e107]:
+              - img "image.png" [ref=f1e109]
+          - paragraph [ref=f1e110]:
+            - strong [ref=f1e112]:
+              - strong [ref=f1e114]: SURO® 膜片及膜元件未经任何氯化处理，具有长期稳定的脱盐性能
+          - paragraph:
+            - strong:
+              - generic:
+                - strong
+          - paragraph [ref=f1e115]:
+            - generic [ref=f1e116]: 余氯或其它氧化剂会损害膜的性能，但是许多膜制造商为了让膜元件初始性能表现出色，在出厂前用活性氯处理了膜元件，获得了短期的性能提升，但却带来了长期的性能快速下降。经氯化处理过的膜元件会带来许多长期缺陷：比如膜寿命会大大缩短，对高pH清洗条件会高度敏感，脱盐率会随时间快速衰减，对铵、硝酸盐、硼、硅、砷酸盐等难脱除的“软离子”及低分子量有机物会表现出更低的脱除率，运行过程中，膜会对水中的氧化性氯极其敏感等。
+          - paragraph [ref=f1e117]
+  - contentinfo [ref=f1e118]:
+    - generic [ref=f1e121]:
+      - generic [ref=f1e123]:
+        - heading "苏瑞膜" [level=3] [ref=f1e124]
+        - list [ref=f1e125]:
+          - listitem [ref=f1e126]:
+            - link "网站首页" [ref=f1e127] [cursor=pointer]:
+              - /url: /
+          - listitem [ref=f1e128]:
+            - link "新闻资讯" [ref=f1e129] [cursor=pointer]:
+              - /url: /news_list
+          - listitem [ref=f1e130]:
+            - link "关于我们" [ref=f1e131] [cursor=pointer]:
+              - /url: /about1
+          - listitem [ref=f1e132]:
+            - link "加入我们" [ref=f1e133] [cursor=pointer]:
+              - /url: /join
+      - generic [ref=f1e135]:
+        - heading "产品中心" [level=3] [ref=f1e136]
+        - list [ref=f1e137]:
+          - listitem [ref=f1e138]:
+            - link "SURO®膜性能优势" [ref=f1e139] [cursor=pointer]:
+              - /url: /products?id=22
+          - listitem [ref=f1e140]:
+            - link "SURO®反渗透与纳滤膜元件" [ref=f1e141] [cursor=pointer]:
+              - /url: /products?id=5
+      - generic [ref=f1e143]:
+        - heading "工程实例" [level=3] [ref=f1e144]
+        - list [ref=f1e145]:
+          - listitem [ref=f1e146]:
+            - link "电力行业" [ref=f1e147] [cursor=pointer]:
+              - /url: /projects?id=1
+          - listitem [ref=f1e148]:
+            - link "钢铁行业" [ref=f1e149] [cursor=pointer]:
+              - /url: /projects?id=2
+          - listitem [ref=f1e150]:
+            - link "海水淡化" [ref=f1e151] [cursor=pointer]:
+              - /url: /projects?id=3
+          - listitem [ref=f1e152]:
+            - link "精细化工" [ref=f1e153] [cursor=pointer]:
+              - /url: /projects?id=4
+          - listitem [ref=f1e154]:
+            - link "渗透液处理行业" [ref=f1e155] [cursor=pointer]:
+              - /url: /projects?id=5
+      - generic [ref=f1e157]:
+        - heading "联系方式" [level=3] [ref=f1e158]
+        - list [ref=f1e159]:
+          - listitem [ref=f1e160]:
+            - generic [ref=f1e161]:
+              - paragraph [ref=f1e162]: 地址：苏州市吴中区甪直镇凌港路128号（富民一区）; 嘉兴市秀洲区油车港镇茶园北路257号5幢
+              - paragraph [ref=f1e163]: 电话：0512-62700495
+              - paragraph [ref=f1e164]: hr@aromem.comsales@aromem.com
+    - paragraph [ref=f1e170]:
+      - text: © Copyright 2017 苏州苏瑞膜纳米科技集团有限公司 Company name:AROMEM PteLtd
+      - link "苏ICP备17025113号-1" [ref=f1e171] [cursor=pointer]:
+        - /url: http://beian.miit.gov.cn/
+  - button "Open Next.js Dev Tools" [ref=f1e177] [cursor=pointer]
