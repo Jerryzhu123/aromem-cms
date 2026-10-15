@@ -20,7 +20,7 @@ jobs:
           npm run build
       - name: 打包运行时产物
         working-directory: cloner
-        run: tar -czf ../../cloner-runtime.tar.gz .next node_modules package.json next.config.ts public
+        run: tar -czf ../cloner-runtime.tar.gz .next node_modules package.json next.config.ts public
       - uses: actions/upload-artifact@v4
         with:
           name: cloner-runtime
