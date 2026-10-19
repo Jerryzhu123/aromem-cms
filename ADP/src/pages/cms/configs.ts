@@ -269,6 +269,7 @@ export const fcSeriesConfig: CmsPageConfig = {
     { key: 'slug', label: '标识', type: 'text', required: true, placeholder: '如 pp-melt-blown' },
     { key: 'name_zh', label: '中文名', type: 'text', required: true },
     { key: 'name_en', label: '英文名', type: 'text' },
+    { key: 'icon_url', label: '分类图标', type: 'image', width: 110 },
     { key: 'tagline_zh', label: '中文标语', type: 'text' },
     { key: 'tagline_en', label: '英文标语', type: 'text' },
     {
