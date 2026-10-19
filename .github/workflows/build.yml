@@ -41,14 +41,16 @@ jobs:
       HUSKY: 0
       CI: "true"
       LOG: /tmp/adp-build.log
+      # 关键：run: 步骤里 GITHUB_TOKEN 不会自动存在，必须从 secrets 显式注入，
+      # 否则 push URL 会变成 x-access-token:@github.com，认证失败 → exit 128。
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
 
       - name: 记录启动标记
-        # 若这一步都没跑出来（ci-status 分支上始终没有 started 字样），
-        # 说明 Actions 没有触发或被禁用，而不是构建失败。
         run: |
           set -e
+          test -n "$GITHUB_TOKEN" || { echo "GITHUB_TOKEN 为空"; exit 1; }
           mkdir -p /tmp/mark && cd /tmp/mark
           git init -q
           git config user.name "github-actions[bot]"
@@ -68,8 +70,7 @@ jobs:
 
       - name: 安装依赖
         working-directory: ADP
-        # 不能加 --ignore-scripts：esbuild / swc 靠 postinstall 落平台二进制，
-        # 跳过就必然失败，这也是上一版 build-adp 一直红的原因。
+        # 不能加 --ignore-scripts：esbuild / swc 靠 postinstall 落平台二进制。
         run: |
           set -o pipefail
           pnpm install --no-frozen-lockfile --reporter=append-only 2>&1 | tee -a "$LOG"
@@ -105,7 +106,6 @@ jobs:
       - name: 回传构建日志与结论（成功失败都执行）
         if: always()
         run: |
-          set -e
           mkdir -p /tmp/st && cd /tmp/st
           git init -q
           git config user.name "github-actions[bot]"
@@ -117,8 +117,9 @@ jobs:
             echo "--- dist 是否存在 ---"
             ls -d "$GITHUB_WORKSPACE/ADP/dist" 2>/dev/null || echo "dist 不存在"
           } > STATUS.txt
-          [ -f "$LOG" ] && cp "$LOG" build.log || echo "(无日志)" > build.log
-          git add -A && git commit -q -m "status ${{ job.status }}"
+          if [ -f "$LOG" ]; then cp "$LOG" build.log; else echo "(无日志)" > build.log; fi
+          git add -A
+          git commit -q -m "status ${{ job.status }}" || true
           git branch -M ci-status
           git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git push -f origin ci-status
