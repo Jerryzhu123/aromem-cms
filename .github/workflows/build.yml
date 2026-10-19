@@ -1,9 +1,17 @@
 name: build
 
+# 触发方式：手动 workflow_dispatch，或 push 到 main。
+#
+# 产物与诊断都通过分支回传（无需 PAT，只要有仓库读权限就能 git clone）：
+#   adp-dist  —— 构建成功的后台静态产物
+#   ci-status —— 每次运行的日志与结论；失败时同样会写，便于无 token 排查
 on:
   workflow_dispatch:
   push:
     branches: [main]
+
+permissions:
+  contents: write
 
 jobs:
   build-cloner:
@@ -29,20 +37,88 @@ jobs:
 
   build-adp:
     runs-on: ubuntu-latest
+    env:
+      HUSKY: 0
+      CI: "true"
+      LOG: /tmp/adp-build.log
     steps:
       - uses: actions/checkout@v4
+
+      - name: 记录启动标记
+        # 若这一步都没跑出来（ci-status 分支上始终没有 started 字样），
+        # 说明 Actions 没有触发或被禁用，而不是构建失败。
+        run: |
+          set -e
+          mkdir -p /tmp/mark && cd /tmp/mark
+          git init -q
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          printf 'started at %s\ncommit %s\nrunner %s\n' "$(date -u +%FT%TZ)" "$GITHUB_SHA" "$RUNNER_OS" > STATUS.txt
+          git add -A && git commit -q -m "started"
+          git branch -M ci-status
+          git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push -f origin ci-status
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+
       - name: 安装 pnpm
         run: npm install -g pnpm@9
-      - name: 安装依赖并构建管理后台
+
+      - name: 安装依赖
+        working-directory: ADP
+        # 不能加 --ignore-scripts：esbuild / swc 靠 postinstall 落平台二进制，
+        # 跳过就必然失败，这也是上一版 build-adp 一直红的原因。
+        run: |
+          set -o pipefail
+          pnpm install --no-frozen-lockfile --reporter=append-only 2>&1 | tee -a "$LOG"
+
+      - name: 构建管理后台
         working-directory: ADP
         run: |
-          pnpm install --ignore-scripts --no-frozen-lockfile
-          pnpm run build
+          set -o pipefail
+          echo "=== max build 起始 $(date -u +%FT%TZ) ===" | tee -a "$LOG"
+          NODE_OPTIONS=--max-old-space-size=4096 pnpm run build 2>&1 | tee -a "$LOG"
+          echo "=== 构建结束 $(date -u +%FT%TZ) ===" | tee -a "$LOG"
+
       - uses: actions/upload-artifact@v4
         with:
           name: adp-dist
           path: ADP/dist/
           retention-days: 7
+
+      - name: 发布产物到 adp-dist 分支
+        run: |
+          set -e
+          mkdir -p "$RUNNER_TEMP/publish" && cd "$RUNNER_TEMP/publish"
+          git init -q
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          cp -r "$GITHUB_WORKSPACE/ADP/dist/." .
+          printf 'source commit: %s\nbuilt at: %s\n' "$GITHUB_SHA" "$(date -u +%FT%TZ)" > BUILD_INFO.txt
+          git add -A && git commit -q -m "adp-dist from ${GITHUB_SHA:0:7}"
+          git branch -M adp-dist
+          git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push -f origin adp-dist
+
+      - name: 回传构建日志与结论（成功失败都执行）
+        if: always()
+        run: |
+          set -e
+          mkdir -p /tmp/st && cd /tmp/st
+          git init -q
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          {
+            echo "job status: ${{ job.status }}"
+            echo "commit: $GITHUB_SHA"
+            echo "finished: $(date -u +%FT%TZ)"
+            echo "--- dist 是否存在 ---"
+            ls -d "$GITHUB_WORKSPACE/ADP/dist" 2>/dev/null || echo "dist 不存在"
+          } > STATUS.txt
+          [ -f "$LOG" ] && cp "$LOG" build.log || echo "(无日志)" > build.log
+          git add -A && git commit -q -m "status ${{ job.status }}"
+          git branch -M ci-status
+          git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push -f origin ci-status
