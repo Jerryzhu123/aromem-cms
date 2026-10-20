@@ -1,0 +1,334 @@
+/**
+ * darlly 商品详情页还原样式。
+ *
+ * 数值来源：cn.darllyfiltration.com 的主题样式表（_compare/darlly/darlly.css），
+ * 原站 `html,body{font-size:625%}` 即 1rem = 100px，下面一律一对一折成 px。
+ * 类名换成 dl- 前缀，避开本站与 antd 的通用类（.container / .btn / .body）。
+ *
+ * 正文部分（.dl-detail-body）只补古腾堡区块的排版规则：原站的表格虚线框、
+ * 列宽百分比、分隔线颜色全写在内联样式里，HTML 原样搬运即可，CSS 不要越权覆盖。
+ */
+
+/* ── 顶部卡片 ─────────────────────────────────────────── */
+.dl-singleProduct {
+  padding: 20px 0;
+}
+.dl-singleProduct .dl-container {
+  position: relative;
+}
+.dl-sp-body {
+  display: flex;
+  flex-wrap: wrap;
+}
+.dl-sp-l {
+  flex-shrink: 0;
+  width: 250px;
+  height: 250px;
+}
+.dl-sp-l img {
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+}
+.dl-sp-tit {
+  color: #0866b1;
+  font-weight: 700;
+  font-size: 20px;
+}
+.dl-sp-desc {
+  margin: 10px 0;
+  text-indent: 2em;
+  font-size: 14px;
+}
+.dl-sp-btn {
+  display: block;
+  float: right;
+  clear: both;
+  width: 200px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  font-size: 14px;
+  color: #fff;
+  background: #0866b1;
+  border-radius: 5px;
+  font-weight: lighter;
+  box-shadow: 2px 2px 2px #999;
+}
+
+/* ── 面包屑 ───────────────────────────────────────────── */
+.dl-crumbs-product .dl-crumbs {
+  margin-top: 0;
+  padding: 10px 0;
+  font-size: 12px;
+}
+.dl-crumb-last {
+  color: #999;
+}
+
+/* ── 锚点条 ───────────────────────────────────────────── */
+.dl-anchor {
+  margin: 0 0 10px;
+}
+.dl-anchor-body {
+  display: flex;
+  flex-wrap: wrap;
+  line-height: 60px;
+  background: #e1e1e1;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.dl-anchor-body a {
+  display: block;
+  padding: 0 20px;
+  height: 60px;
+  color: #0866b1;
+  font-size: 14px;
+  font-weight: 700;
+}
+.dl-anchor-body a:hover {
+  color: #fff;
+  background: #0866b1;
+}
+
+/* ── 正文（原站古腾堡区块） ───────────────────────────── */
+/* 英文页的数据表说明：原厂只有中文版，如实标注来源 */
+.dl-detail-note {
+  margin: 10px 0 0;
+  padding: 10px 14px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #444;
+  background: #f4f7fb;
+  border-left: 3px solid #0866b1;
+  border-radius: 0 5px 5px 0;
+}
+.dl-productDetails .dl-detail-body {
+  padding: 10px 0;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #000;
+}
+/* 原站主题把块级元素的默认外边距归零，只留 figure 的下边距 */
+.dl-detail-body p,
+.dl-detail-body h3,
+.dl-detail-body dl,
+.dl-detail-body dd {
+  margin: 0;
+}
+.dl-detail-body h3 {
+  font-size: 1.17em;
+  font-weight: 700;
+}
+.dl-detail-body ul,
+.dl-detail-body ol {
+  margin: 0;
+  padding-left: 40px;
+}
+.dl-detail-body figure {
+  margin: 0 0 1em;
+}
+.dl-detail-body img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 分栏：原站 gap 2em，栏内允许断词 */
+.dl-detail-body .wp-block-columns {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: normal;
+  gap: 2em;
+  margin-bottom: 1.75em;
+}
+.dl-detail-body .wp-block-column {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* 表格：容器可横向滚动；单元格边框与内边距同原站，颜色仍由内联样式决定 */
+.dl-detail-body .wp-block-table {
+  overflow-x: auto;
+}
+.dl-detail-body table {
+  border-collapse: collapse;
+}
+.dl-detail-body .wp-block-table table {
+  width: 100%;
+}
+.dl-detail-body .wp-block-table td,
+.dl-detail-body .wp-block-table th {
+  /* 原站成品页没有给单元格上默认边框，靠 is-style-stripes 的隔行底色区分行；
+     加 1px 实线反而会多出一圈竖线（实测 cn.darllyfiltration.com/product/hc-* ）。 */
+  border: 0;
+  padding: 0.5em;
+}
+/* 原站只有 .is-style-stripes 的表格才有隔行底色 */
+.dl-detail-body .wp-block-table.is-style-stripes tbody tr:nth-child(odd) {
+  background-color: #f0f0f0;
+}
+
+/* 图片画廊：两图并排，columns-1 通栏 */
+.dl-detail-body .wp-block-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 0 0 1em;
+  padding: 0;
+  list-style: none;
+}
+.dl-detail-body .wp-block-gallery > figure {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0;
+}
+.dl-detail-body .wp-block-gallery.columns-1 > figure {
+  flex-basis: 100%;
+}
+.dl-detail-body .wp-block-gallery img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* 分隔线：原站是「1px 上下边框 + 背景色」，颜色随内联 color/background-color */
+.dl-detail-body .wp-block-separator {
+  height: 0;
+  border: 1px solid;
+  border-left: none;
+  border-right: none;
+  margin: 8px auto;
+}
+.dl-detail-body .wp-block-spacer {
+  clear: both;
+}
+
+/* ── 资料下载 ─────────────────────────────────────────── */
+.dl-download {
+  padding: 0 0 20px;
+}
+.dl-download h3 {
+  font-size: 1.17em;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+.dl-pdf {
+  display: inline-block;
+  line-height: 0;
+}
+.dl-pdf img {
+  display: block;
+  width: auto;
+  height: auto;
+}
+.dl-pdf:hover {
+  opacity: 0.85;
+}
+.dl-pdf-none {
+  font-size: 14px;
+  color: #666;
+}
+
+/* ── 最近浏览 ─────────────────────────────────────────── */
+.dl-history {
+  padding: 10px 0;
+}
+.dl-history-header {
+  margin-bottom: 10px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #0866b1;
+}
+.dl-history-body {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+.dl-history-card {
+  position: relative;
+  display: block;
+  border-radius: 5px;
+  overflow: hidden;
+  background: #f5f5f5;
+}
+.dl-history-card img {
+  display: block;
+  width: 100%;
+}
+.dl-history-card p {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 30px;
+  line-height: 30px;
+  padding: 0 10px;
+  margin: 0;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── 断点：≤781 分栏堆叠（原站 WordPress 同款规则） ───── */
+@media screen and (max-width: 781px) {
+  .dl-detail-body .wp-block-columns > .wp-block-column {
+    flex-basis: 100% !important;
+  }
+}
+
+/* ── 断点：768 ────────────────────────────────────────── */
+@media screen and (min-width: 768px) {
+  .dl-sp-body {
+    flex-wrap: nowrap;
+  }
+  .dl-sp-l {
+    width: 140px;
+    height: 140px;
+    margin-right: 20px;
+  }
+  .dl-history-body {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 40px;
+  }
+  .dl-history {
+    padding: 20px 0;
+  }
+}
+
+/* ── 断点：992 —— 卡片浮到横幅上，图 250×250 带投影 ───── */
+@media screen and (min-width: 992px) {
+  .dl-singleProduct {
+    padding: 0 0 20px;
+  }
+  .dl-sp-body {
+    position: relative;
+    min-height: 210px;
+    margin-top: -80px;
+    background: #fff;
+    border-radius: 11px 11px 0 0;
+  }
+  .dl-sp-l {
+    position: absolute;
+    top: -60px;
+    left: 10px;
+    width: 250px;
+    height: 250px;
+    margin-right: 0;
+    border-radius: 7px;
+    box-shadow: 0 0 5px #444;
+    overflow: hidden;
+  }
+  .dl-sp-r {
+    padding: 20px;
+    margin-left: 260px;
+  }
+  .dl-history-body {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 50px;
+  }
+}

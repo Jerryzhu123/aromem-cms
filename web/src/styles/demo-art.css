@@ -1,0 +1,124 @@
+/* ==========================================================================
+ * 原设计稿插画原码（逐字搬运，未改参数）
+ *
+ * 来源：客户概念稿 SURMEM_website_demo(1).html 的 <style> 段。
+ * 还原即搬原码——类名、尺寸、渐变角度、阴影、位移全部保持原稿原值，
+ * 后续若要调，必须先确认原稿本身是否要改，不要在此处二次创作。
+ *
+ * 含两部分：首页英雄区滤芯（.visual/.filter/.ring）与卡片图（.art 系列）。
+ * ========================================================================== */
+
+/* ---------- 英雄区滤芯 ---------- */
+.visual {
+  height: 360px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.filter {
+  width: 120px;
+  height: 300px;
+  border-radius: 20px;
+  background: repeating-linear-gradient(
+    90deg,
+    #d7e5e9 0 8px,
+    #f6fbfd 8px 16px,
+    #b2cbd4 16px 18px
+  );
+  border: 14px solid #b3c7d0;
+  box-shadow: 16px 18px 35px #001e3370;
+  transform: rotate(-12deg);
+}
+/* 上下两个椭圆端盖 */
+.filter:before,
+.filter:after {
+  content: "";
+  position: absolute;
+  left: -14px;
+  width: 120px;
+  height: 30px;
+  border-radius: 50%;
+  background: #8ca7b4;
+  border: 6px solid #dceaf0;
+}
+.filter:before {
+  top: -24px;
+}
+.filter:after {
+  bottom: -24px;
+}
+.filter.small {
+  height: 220px;
+  width: 95px;
+  transform: rotate(12deg) translate(20px, 45px);
+}
+.filter.small:before,
+.filter.small:after {
+  width: 95px;
+}
+.ring {
+  position: absolute;
+  width: 350px;
+  height: 350px;
+  border: 1px solid #ffffff28;
+  border-radius: 50%;
+}
+
+/* ---------- 卡片图（.art 系列） ---------- */
+.art {
+  height: 190px;
+  background: linear-gradient(135deg, #dcecf0, #a4c8d2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+/* 滤芯卡片：伪元素画一支迷你滤芯 */
+.art:before {
+  content: "";
+  width: 80px;
+  height: 145px;
+  background: repeating-linear-gradient(90deg, #e7f0f1 0 7px, #9db9c1 7px 10px);
+  border: 10px solid #789aa7;
+  border-radius: 14px;
+  box-shadow: 22px 12px 0 -3px #c9dee3;
+  transform: rotate(-16deg);
+}
+.art.ro {
+  background: linear-gradient(135deg, #dbe9f4, #a6c7d9);
+}
+.art.ro:before {
+  height: 90px;
+  width: 175px;
+  transform: rotate(-18deg);
+  background: linear-gradient(90deg, #edf5f9, #c5d9e4);
+  border: 13px solid #6c9eb9;
+  border-radius: 50px;
+}
+.art.custom {
+  background: linear-gradient(135deg, #d9f2ec, #a8d7d0);
+}
+.art.custom:after {
+  content: "YOUR BRAND";
+  position: absolute;
+  background: #fff;
+  padding: 8px 18px;
+  color: #176b75;
+  font-size: 12px;
+  font-weight: bold;
+  transform: rotate(-16deg);
+}
+
+/* ---------- 原稿的两级响应式（仅插画相关） ---------- */
+@media (max-width: 850px) {
+  .visual {
+    height: 250px;
+  }
+}
+@media (max-width: 610px) {
+  .visual {
+    display: none;
+  }
+}

@@ -1,0 +1,228 @@
+/**
+ * 页头样式：粘性置顶、图片标志、antd Tabs 横排导航、移动端汉堡抽屉。
+ * （与 site.css 的设计令牌配合使用。）
+ *
+ * 结构逐字对客户概念稿 `SURMEM_website_demo.html`：页头只有
+ * 「标志图 + 六个导航标签 + 移动端汉堡」，没有 CTA 按钮（询价入口
+ * 由导航末项 Contact Us 承担，与原稿一致）。
+ *
+ * 视觉规格同样取自原稿：
+ *   .top{padding:18px 24px;gap:20px}
+ *   .nav{gap:24px}  .nav a{font-size:13px;font-weight:bold}
+ *   .nav a:hover,.nav a.active{color:var(--blue)}   （--blue:#126c9c）
+ *   窄屏 850px：.nav{gap:10px} .nav a{font-size:12px}
+ * antd Tabs 的常驻灰线与空内容面板在此抹掉；选中蓝线（ink bar）
+ * 保留并染成品牌蓝，是唯一的指示元素。
+ */
+.site-head {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #fff;
+  box-shadow: 0 2px 16px rgba(16, 43, 67, 0.08);
+}
+
+.site-head .top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  gap: 20px;
+}
+
+/* 标志图：上一版已定稿的 SURMEM 标（185×62 透明底 PNG）。
+   高度锁定、宽度自适应，保持原始宽高比不拉伸。 */
+.site-head .logo-img {
+  display: block;
+  height: 42px;
+  width: auto;
+}
+
+/* 抽屉菜单标题里的标志：小一号 */
+.site-head .logo-img.sm {
+  height: 32px;
+}
+
+/* ── 桌面端 Tabs 导航 ───────────────────────────────── */
+.head-nav {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* 选择器统一带 .site-head 提高权重：antd 运行时注入的样式与本文同为
+   单类权重、靠后胜出，不加前缀会被 antd 盖掉。 */
+.site-head .head-tabs {
+  width: 100%;
+}
+
+/* 只用标签栏：nav 无下边距、无底线 */
+.site-head .head-tabs .ant-tabs-nav {
+  margin: 0;
+}
+
+.site-head .head-tabs .ant-tabs-nav::before {
+  border-bottom: 0;
+}
+
+/* 原稿 .nav{gap:24px} + 靠右对齐。
+   关键：antd 的 .ant-tabs-nav-wrap 是 flex 容器，而 .ant-tabs-nav-list
+   在其中没有 flex:1，宽度按内容收缩——此时 justify-content 完全无效
+   （容器与内容等宽，右对齐无空间可挪），导航会紧贴 logo 左侧排布。
+   必须先给 nav-list 补 flex:1 让它撑满，再 justify-content:flex-end，
+   才能得到设计图「logo 在左、导航贴容器右边缘」的布局。 */
+.site-head .head-tabs .ant-tabs-nav-list {
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.site-head .head-tabs .ant-tabs-tab {
+  padding: 6px 0;
+}
+
+.site-head .head-tabs .ant-tabs-tab + .ant-tabs-tab {
+  margin-inline-start: 24px;
+}
+
+/* 原稿 .nav a{font-size:13px;font-weight:bold} */
+.site-head .head-tabs .ant-tabs-tab-btn {
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--ink);
+}
+
+/* 标签内容是 next/link 渲染的 <a>：继承 tab 的颜色与字重，去掉浏览器
+   默认下划线。ink bar 过渡的是 tab 元素本身的 left/width，<a> 是否
+   block 不影响动画。 */
+.site-head .head-tabs .ant-tabs-tab-btn > a,
+.site-head .drawer-tabs .ant-tabs-tab-btn > a {
+  color: inherit;
+  text-decoration: none;
+  display: block;
+}
+
+/* 原稿 .nav a:hover,.nav a.active{color:var(--blue)} */
+.site-head .head-tabs .ant-tabs-tab-btn:hover,
+.site-head .head-tabs .ant-tabs-tab-active .ant-tabs-tab-btn,
+.site-head .head-tabs .ant-tabs-tab-btn > a:hover {
+  color: var(--blue);
+}
+
+/* 选中态保留品牌蓝指示条（antd ink bar），但去掉那条常驻灰线。
+   两者是不同元素：灰线 = .ant-tabs-nav::before（已在上面置 border-bottom:0），
+   蓝线 = .ant-tabs-ink-bar，这里只改它的颜色与粗细，保留滑动动画。 */
+.site-head .head-tabs .ant-tabs-ink-bar {
+  background: var(--blue);
+  height: 2px;
+  border-radius: 1px;
+}
+
+/* 悬停时的背景高亮块也不需要（原稿是纯文字 + 颜色变化） */
+.site-head .head-tabs .ant-tabs-tab:hover {
+  background: transparent;
+}
+
+/* items 不带内容面板，此处兜底隐藏，避免出现空白区域 */
+.site-head .head-tabs .ant-tabs-content-holder,
+.site-head .head-tabs .ant-tabs-content {
+  display: none;
+}
+
+/* 语言 Dropdown：导航右侧（EN / 中文），hover 出下拉；定宽不收缩。
+   移动端隐藏（抽屉内保留点击式 Select） */
+.site-head .head-lang {
+  flex: 0 0 auto;
+  width: 72px;
+  font-weight: bold;
+  /* 按钮默认样式复位，视觉对齐原 Select 无边框形态 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: var(--ink);
+  font-size: inherit;
+}
+
+/* ── 移动端抽屉内的纵向 Tabs ─────────────────────────── */
+/* 纵向布局下 nav 是 column 方向，nav-wrap 不再是横向 flex，
+   标签默认按内容宽度收缩、内容区隐藏后会挤成一团；
+   这里直接给 nav / nav-list 显式宽度撑满抽屉。 */
+.site-head .drawer-tabs > .ant-tabs-nav {
+  width: 100%;
+  margin: 0;
+}
+
+.site-head .drawer-tabs .ant-tabs-nav-list {
+  width: 100%;
+  flex: 1;
+}
+
+.site-head .drawer-tabs .ant-tabs-tab {
+  justify-content: flex-start;
+  padding: 10px 0;
+}
+
+.site-head .drawer-tabs .ant-tabs-tab-btn {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--ink);
+}
+
+/* 抽屉里改为「左蓝右灰」的竖向列表：当前项左侧一条品牌蓝竖条标识，
+   同时去掉纵向布局自带的右侧常驻灰竖线。 */
+.site-head .drawer-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--blue);
+}
+
+/* 抽屉内的语言 Select：撑满抽屉宽度，与导航留出间距 */
+.site-head .drawer-lang {
+  width: 100%;
+  margin-top: 16px;
+}
+
+.site-head .drawer-tabs .ant-tabs-ink-bar {
+  background: var(--blue);
+  width: 2px;
+  height: auto;
+  border-radius: 1px;
+}
+
+.site-head .drawer-tabs .ant-tabs-nav::before {
+  border-inline-end: 0;
+}
+
+.site-head .drawer-tabs .ant-tabs-content-holder,
+.site-head .drawer-tabs .ant-tabs-content {
+  display: none;
+}
+
+/* 汉堡按钮：桌面隐藏。选择器带 .site-head 提高权重，
+   否则会被 antd Button 自身的 display 样式（运行时注入、同权重靠后胜出）盖掉。 */
+.site-head .head-burger {
+  display: none;
+}
+
+/* 移动端：藏横排导航与语言 Select，出汉堡（抽屉内有语言项） */
+@media (max-width: 900px) {
+  .site-head .head-nav,
+  .site-head .head-lang {
+    display: none;
+  }
+
+  .site-head .head-burger {
+    display: inline-flex;
+  }
+}
+
+/* 窄屏 1024px 以下按原稿收紧标签间距与字号（原 850px 断点） */
+@media (max-width: 1024px) {
+  .site-head .head-tabs .ant-tabs-tab + .ant-tabs-tab {
+    margin-inline-start: 12px;
+  }
+
+  .site-head .head-tabs .ant-tabs-tab-btn {
+    font-size: 12px;
+  }
+}

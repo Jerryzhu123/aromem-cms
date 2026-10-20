@@ -1,0 +1,88 @@
+name: build-web
+
+# 前台（surmem-web）云构建：本机 DLP 会挡子进程读桌面文件、生产机只有 1.6G 内存，
+# 两端都不适合跑 Next 构建，统一放 GitHub 跑。
+# 产物推到 web-out 分支（force push，只留最新一次），日志推 ci-status-web。
+# 泳池产品图体量大且内容稳定，不进产物分支，部署时由服务器从在用目录硬链接。
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "web/**"
+      - ".github/workflows/build-web.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  build-web:
+    runs-on: ubuntu-latest
+    env:
+      CI: "true"
+      LOG: /tmp/web-build.log
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: web/pnpm-lock.yaml
+
+      - name: 安装依赖
+        working-directory: web
+        run: |
+          set -o pipefail
+          pnpm install --frozen-lockfile --reporter=append-only 2>&1 | tee -a "$LOG"
+
+      - name: 构建
+        working-directory: web
+        run: |
+          set -o pipefail
+          NODE_OPTIONS=--max-old-space-size=4096 pnpm run build 2>&1 | tee -a "$LOG"
+
+      - name: 发布产物到 web-out 分支
+        run: |
+          set -e
+          test -d "$GITHUB_WORKSPACE/web/out" || { echo "out 不存在，构建未产出静态文件"; exit 1; }
+          mkdir -p "$RUNNER_TEMP/publish" && cd "$RUNNER_TEMP/publish"
+          git init -q
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          cp -r "$GITHUB_WORKSPACE/web/out/." .
+          rm -rf products/pool/*/ || true
+          printf 'source commit: %s\nbuilt at: %s\npool images: 已剔除（部署时硬链接）\n' \
+            "$GITHUB_SHA" "$(date -u +%FT%TZ)" > BUILD_INFO.txt
+          git add -A
+          git commit -q -m "web-out from ${GITHUB_SHA:0:7}"
+          git branch -M web-out
+          git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push -f origin web-out
+
+      - name: 回传日志（成功失败都执行）
+        if: always()
+        run: |
+          mkdir -p /tmp/st-web && cd /tmp/st-web
+          git init -q
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          {
+            echo "job status: ${{ job.status }}";
+            echo "commit: $GITHUB_SHA";
+            ls -d "$GITHUB_WORKSPACE/web/out" 2>/dev/null || echo "out 不存在";
+            ls -d "$GITHUB_WORKSPACE/web/out/products/pool" 2>/dev/null && \
+              echo "pool html: $(find "$GITHUB_WORKSPACE/web/out/products/pool" -maxdepth 1 -name '*.html' | wc -l)";
+          } > STATUS.txt
+          if [ -f "$LOG" ]; then cp "$LOG" build.log; else echo "(无日志)" > build.log; fi
+          git add -A
+          git commit -q -m "status ${{ job.status }}" || true
+          git branch -M ci-status-web
+          git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push -f origin ci-status-web
