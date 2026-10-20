@@ -6,6 +6,10 @@ node_modules/
 out/
 next-env.d.ts
 
+# 构建期从后台接口拉的数据快照（每次构建现拉，不入库；
+# 入库会导致「代码改了数据没改」的不一致，也会把 236KB 的重复数据塞进历史）
+src/data/__generated__/
+
 # 环境变量（凭据绝不入库）
 .env
 .env.local

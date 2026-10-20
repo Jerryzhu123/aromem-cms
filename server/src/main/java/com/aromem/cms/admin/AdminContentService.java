@@ -68,7 +68,7 @@ public class AdminContentService {
             Map.entry("home-tiles", Set.of("board", "name_zh", "name_en", "image_url", "link_url",
                     "sort_order", "status")),
             Map.entry("fc-series", Set.of("slug", "name_zh", "name_en", "tagline_zh", "tagline_en",
-                    "facets_zh", "facets_en", "sort_order", "coming_soon", "status")),
+                    "facets_zh", "facets_en", "icon_url", "sort_order", "coming_soon", "status")),
             Map.entry("rfq", Set.of("status")),
             Map.entry("fc-products", Set.of("series_slug", "model", "slug", "title", "title_zh",
                     "subtitle", "subtitle_zh", "gallery_json", "overall_length", "overall_length_unit",
@@ -78,7 +78,9 @@ public class AdminContentService {
                     "flow_rate_unit", "flow_rate_unit_zh", "max_temperature_c", "max_pressure_drop_psid",
                     "application_industries_json", "compatible_models_json", "documents_json",
                     "certifications_json", "seo_title", "seo_title_zh", "seo_description",
-                    "seo_description_zh", "data_status", "status", "sort_order")),
+                    "seo_description_zh", "data_status", "status", "sort_order",
+                    // V10 泳池类专有字段
+                    "sqft", "end_cap_top", "end_cap_bottom", "oem_machine", "source_url")),
             Map.entry("cross-reference", Set.of("brand", "oem_model", "relation", "note", "note_zh",
                     "surmem_model", "series_slug", "product_slug", "status", "sort_order")),
             Map.entry("media", Set.<String>of()));
@@ -140,18 +142,26 @@ public class AdminContentService {
             args.add(locale);
         }
         if (keyword != null && !keyword.isBlank()) {
-            // product-category 没有 title 列，按表选关键词列
-            String keywordColumn = switch (table) {
-                case "product_category" -> "name";
-                case "fc_series" -> "name_zh";
-                case "home_tile" -> "name_zh";
-                case "fc_product" -> "model";
-                case "fc_cross_reference" -> "oem_model";
-                case "rfq_submission" -> "full_name";
-                default -> "title";
+            // 关键词可命中多列：泳池滤芯 495 条，运营常常按「原厂机型」（Jacuzzi、Jandy）
+            // 或中文标题找货，只搜 model 一列等于搜不到。
+            List<String> keywordColumns = switch (table) {
+                case "product_category" -> List.of("name");
+                case "fc_series" -> List.of("name_zh", "name_en");
+                case "home_tile" -> List.of("name_zh", "name_en");
+                case "fc_product" -> List.of("model", "slug", "title", "title_zh", "oem_machine");
+                case "fc_cross_reference" -> List.of("oem_model", "surmem_model", "brand");
+                case "rfq_submission" -> List.of("full_name");
+                default -> List.of("title");
             };
-            where.append(" AND ").append(keywordColumn).append(" LIKE ?");
-            args.add("%" + keyword + "%");
+            where.append(" AND (");
+            for (int i = 0; i < keywordColumns.size(); i++) {
+                if (i > 0) {
+                    where.append(" OR ");
+                }
+                where.append(keywordColumns.get(i)).append(" LIKE ?");
+                args.add("%" + keyword + "%");
+            }
+            where.append(")");
         }
         if (status != null && !status.isBlank() && hasStatus(table)) {
             where.append(" AND status = ?");
@@ -160,7 +170,11 @@ public class AdminContentService {
         long total = jdbc.queryForObject("SELECT COUNT(*) FROM " + table + where, Long.class, args.toArray());
         int safePage = Math.max(page, 1);
         int safeSize = Math.min(Math.max(size, 1), 100);
-        String orderBy = " ORDER BY id DESC LIMIT ? OFFSET ?";
+        // fc_product 是唯一有运营排序语义的表（产品目录顺序即 sort_order），
+        // 其余表按新建时间倒序更符合「最新在前」的直觉。
+        String orderBy = "fc_product".equals(table)
+                ? " ORDER BY sort_order, id LIMIT ? OFFSET ?"
+                : " ORDER BY id DESC LIMIT ? OFFSET ?";
         List<Map<String, Object>> items = jdbc.queryForList(
                 "SELECT * FROM " + table + where + orderBy,
                 appendArgs(args, safeSize, (safePage - 1) * safeSize));

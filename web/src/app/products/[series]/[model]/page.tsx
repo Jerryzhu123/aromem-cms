@@ -7,8 +7,8 @@ import { DARLLY_ITEMS, getDarllyCategory, getDarllyItem } from "@/data/darlly";
 import { getDarllyDetail } from "@/data/darlly-detail";
 import { getDarllyDetailEn } from "@/data/darlly-detail-en";
 import PoolProductView from "@/components/products/PoolProductView";
-import { POOL_ITEMS, getPoolItem } from "@/data/pool";
-import { getPoolDetail } from "@/data/pool-detail";
+/* 泳池数据来自后台接口的构建期快照，不再读编译期常量 */
+import { getPoolItem, getPoolDetail, poolSlugs } from "@/lib/pool-source";
 import { resolveCatalogProduct } from "@/data/darlly-adapter";
 
 type PageProps = { params: Promise<{ series: string; model: string }> };
@@ -24,8 +24,8 @@ export function generateStaticParams() {
       series,
       model: item.slug,
     })),
-    /* 泳池滤芯：件号即 URL 段 */
-    ...POOL_ITEMS.map((item) => ({ series: "pool", model: item.slug })),
+    /* 泳池滤芯：件号即 URL 段，清单在构建前由后台接口拉取并落成快照 */
+    ...poolSlugs().map((slug) => ({ series: "pool", model: slug })),
   ];
   /* 去重：大流量有 5 款两边都有，重复参数会触发静态导出告警 */
   const seen = new Set<string>();

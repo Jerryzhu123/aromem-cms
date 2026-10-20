@@ -351,11 +351,18 @@ export const fcProductsConfig: CmsPageConfig = {
     { key: 'outside_diameter', label: '外径', type: 'text', width: 80 },
     { key: 'outside_diameter_unit', label: '外径单位', type: 'text', hideInTable: true },
     { key: 'outside_diameter_unit_zh', label: '外径单位(中)', type: 'text', hideInTable: true },
+    // 泳池类专有：过滤面积（sq.ft.）。工业滤芯留空，按面积分档的筛选就靠这一列。
+    { key: 'sqft', label: '面积(sq.ft.)', type: 'number', width: 100 },
     { key: 'inner_diameter', label: '内径', type: 'text', hideInTable: true },
     { key: 'micron_absolute', label: '绝对精度', type: 'text', width: 90 },
     { key: 'micron_nominal', label: '公称精度', type: 'text', width: 90 },
     jsonAreaField('media_material_json', '滤材（数组 JSON）', '["PP"]'),
     { key: 'end_cap', label: '端盖', type: 'text', hideInTable: true },
+    // 泳池类是「上开/下开」成对的端盖形式（如 3/8" Open / 6" Open），
+    // 与工业滤芯的单一 end_cap 不是一回事，单列两栏。
+    { key: 'end_cap_top', label: '上端盖', type: 'text', width: 120 },
+    { key: 'end_cap_bottom', label: '下端盖', type: 'text', width: 120 },
+    { key: 'oem_machine', label: '原厂机型', type: 'text', hideInTable: true },
     { key: 'connection', label: '接口', type: 'text', hideInTable: true },
     { key: 'flow_rate_min', label: '最小流量', type: 'text', hideInTable: true },
     { key: 'flow_rate_max', label: '最大流量', type: 'text', hideInTable: true },
@@ -374,6 +381,7 @@ export const fcProductsConfig: CmsPageConfig = {
     { key: 'seo_description', label: 'SEO描述', type: 'textarea', hideInTable: true },
     { key: 'seo_description_zh', label: 'SEO描述(中)', type: 'textarea', hideInTable: true },
     { key: 'data_status', label: '数据状态', type: 'text', width: 130, placeholder: 'awaiting-client-data / provided' },
+    { key: 'source_url', label: '数据来源页', type: 'text', hideInTable: true },
     sortOrderField(),
     statusField(),
   ],

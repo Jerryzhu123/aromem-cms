@@ -4,7 +4,7 @@ import DarllyCategoryView from "@/components/products/DarllyCategoryView";
 import SeriesView from "@/components/products/SeriesView";
 import { CATALOG_SERIES, getProductsBySeries, getSeries } from "@/data/catalog";
 import { getDarllyCategory } from "@/data/darlly";
-import { POOL_CATEGORY } from "@/data/pool";
+import { poolCategory } from "@/lib/pool-source";
 
 type PageProps = { params: Promise<{ series: string }> };
 
@@ -43,9 +43,12 @@ export default async function SeriesPage({ params }: PageProps) {
     return <DarllyCategoryView category={darlly} locale="en" />;
   }
 
-  /* 泳池滤芯：版式与其他品类一致，数据来自 darllyfilter.com（见 data/pool.ts） */
-  if (series === "pool" && POOL_CATEGORY.items.length > 0) {
-    return <DarllyCategoryView category={POOL_CATEGORY} locale="en" />;
+  /* 泳池滤芯：版式与其他品类一致，数据来自后台接口的构建期快照（lib/pool-source） */
+  if (series === "pool") {
+    const pool = poolCategory();
+    if (pool.items.length > 0) {
+      return <DarllyCategoryView category={pool} locale="en" />;
+    }
   }
 
   const item = getSeries(series);

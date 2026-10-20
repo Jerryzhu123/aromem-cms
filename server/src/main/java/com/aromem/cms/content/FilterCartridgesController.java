@@ -63,7 +63,10 @@ public class FilterCartridgesController {
             List<Document> documents,
             List<String> certifications,
             String seoTitle, String seoTitleZh, String seoDescription, String seoDescriptionZh,
-            String dataStatus) {
+            String dataStatus,
+            // 泳池类专有（V10 迁移新增），工业滤芯这几项为 null
+            Double sqft, String endCapTop, String endCapBottom, String oemMachine,
+            String sourceUrl) {
     }
 
     public record CrossReferenceRow(String brand, String oemModel, String relation,
@@ -173,7 +176,9 @@ public class FilterCartridgesController {
                 stringList(r.get("certifications_json")),
                 str(r.get("seo_title")), str(r.get("seo_title_zh")),
                 str(r.get("seo_description")), str(r.get("seo_description_zh")),
-                str(r.get("data_status")));
+                str(r.get("data_status")),
+                num(r.get("sqft")), str(r.get("end_cap_top")), str(r.get("end_cap_bottom")),
+                str(r.get("oem_machine")), str(r.get("source_url")));
     }
 
     private List<String> stringList(Object json) {
@@ -228,5 +233,20 @@ public class FilterCartridgesController {
 
     private static String str(Object v) {
         return v == null ? "" : String.valueOf(v);
+    }
+
+    /** DECIMAL 列取出来是 BigDecimal，转 Double 给前端直接当数字用；空值保持 null */
+    private static Double num(Object v) {
+        if (v == null) {
+            return null;
+        }
+        if (v instanceof Number n) {
+            return n.doubleValue();
+        }
+        try {
+            return Double.parseDouble(String.valueOf(v));
+        } catch (NumberFormatException ex) {
+            return null;
+        }
     }
 }
