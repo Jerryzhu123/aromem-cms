@@ -78,6 +78,9 @@ const KNOWN_SERIES = new Set([
   "depth",
   "specialty",
   "ro-membranes",
+  // 2026-10-21 新增：从 darlly 中文站复制的一级品类，各有独立系列页
+  "membrane-contactor",
+  "capsule-disc",
 ]);
 
 /** 该系列 slug 是否有对应系列页（决定系列卡是否可直接跳转） */

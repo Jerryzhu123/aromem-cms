@@ -30,8 +30,22 @@ import type {
   DarllyItem,
 } from "@/data/darlly-types";
 
-/** 三个已复制的品类（路由分流依据，不属于内容运营范畴） */
-export const DARLLY_SERIES_SLUGS = ["pleated", "high-flow", "multifold"] as const;
+/**
+ * 已复制的 darlly 品类（路由分流依据，不属于内容运营范畴）。
+ *
+ * 2026-10-21 从三个扩到五个：深层过滤、金属滤芯两个原有系列在库里的型号一并
+ * 换成原站真实商品后也走这套版式；膜接触器、囊式与碟式是当日新增的一级品类。
+ * 加系列时这里必须同步，否则 /products/<slug> 会落到站内模板而不是原站版式。
+ */
+export const DARLLY_SERIES_SLUGS = [
+  "pleated",
+  "high-flow",
+  "multifold",
+  "depth",
+  "specialty",
+  "membrane-contactor",
+  "capsule-disc",
+] as const;
 
 /** 兜底过期：吊销请求万一没送到，最长一小时也会自动刷新 */
 const FALLBACK_TTL_SECONDS = 3600;
@@ -186,7 +200,9 @@ const loadDarllyData = cache(async (): Promise<DarllyData> => {
   });
 
   if (categories.size === 0) {
-    throw new Error("darlly 品类组装后为空：接口没有返回 pleated / high-flow / multifold");
+    throw new Error(
+      `darlly 品类组装后为空：接口没有返回 ${DARLLY_SERIES_SLUGS.join(" / ")} 中的任何一个`,
+    );
   }
 
   return { categories, rows };

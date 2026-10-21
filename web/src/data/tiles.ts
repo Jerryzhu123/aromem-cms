@@ -22,6 +22,10 @@ export const TILE_ICONS: Record<string, string> = {
   // 以下两个已不在品类导航里（后台置为 OFFLINE），保留图标以备恢复
   depth: "/products/tile-depth.png",
   specialty: "/products/tile-metal.png",
+  // 2026-10-21 新增品类：原站 S-Capsule.jpg / ico-membrane-contactors.jpg
+  // 同尺寸同风格（560×300 透明底线描），与既有七个图标一致
+  "membrane-contactor": "/products/tile-membrane-contactor.png",
+  "capsule-disc": "/products/tile-capsule-disc.png",
   "ro-membranes": "/products/tile-ro.png",
 };
 
