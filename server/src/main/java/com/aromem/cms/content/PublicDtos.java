@@ -175,6 +175,8 @@ final class PublicDtos {
     /** 板块①滤芯系列条目（一次返回双语全量字段，前台按语言自取）。 */
     record SeriesItem(long id, String slug, String nameZh, String nameEn,
                       String taglineZh, String taglineEn,
+                      // V9 迁移的列：系列图标（媒体库 relativeUrl，如 /media/2026/10/x.png）
+                      String iconUrl,
                       List<String> facetsZh, List<String> facetsEn, boolean comingSoon,
                       // V11：系列级模板文案。整个系列共用一份，所以挂系列不挂型号——
                       // 复制进每行会导致改一个字要改几十行。

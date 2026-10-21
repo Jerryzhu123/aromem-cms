@@ -476,7 +476,7 @@ public class SiteQueryService {
     /** 板块①滤芯系列清单（双语全量返回；facets 按 | 拆分；语言由前台自取）。 */
     public List<PublicDtos.SeriesItem> fcSeries(String locale) {
         record SeriesRow(long id, String slug, String nameZh, String nameEn,
-                         String taglineZh, String taglineEn,
+                         String taglineZh, String taglineEn, String iconUrl,
                          String facetsZh, String facetsEn, boolean comingSoon,
                          String checklistZh, String checklistEn,
                          String verificationZh, String verificationEn,
@@ -485,6 +485,7 @@ public class SiteQueryService {
         List<SeriesRow> rows = jdbc.sql("""
                         SELECT id, slug, name_zh AS nameZh, name_en AS nameEn,
                                tagline_zh AS taglineZh, tagline_en AS taglineEn,
+                               icon_url AS iconUrl,
                                facets_zh AS facetsZh, facets_en AS facetsEn, coming_soon AS comingSoon,
                                checklist_zh AS checklistZh, checklist_en AS checklistEn,
                                verification_zh AS verificationZh, verification_en AS verificationEn,
@@ -494,6 +495,7 @@ public class SiteQueryService {
                 .query(SeriesRow.class).list();
         return rows.stream().map(r -> new PublicDtos.SeriesItem(
                 r.id(), r.slug(), r.nameZh(), r.nameEn(), r.taglineZh(), r.taglineEn(),
+                r.iconUrl(),
                 toFacets(r.facetsZh()), toFacets(r.facetsEn()), r.comingSoon(),
                 toFacets(r.checklistZh()), toFacets(r.checklistEn()),
                 r.verificationZh(), r.verificationEn(),
