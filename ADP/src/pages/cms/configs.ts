@@ -417,6 +417,36 @@ export const fcSeriesConfig: CmsPageConfig = {
       hideInTable: true,
       placeholder: '如 Micron rating、Overall length，一项一个标签',
     },
+
+    // ── 系列级模板文案（V11 入库）──────────────────────────────
+    // 报价清单和核实声明在整个系列内是同一份，所以挂在系列上而不是每个型号上：
+    // 改一次，该系列下所有型号的详情页一起变。
+    {
+      key: 'checklist_zh',
+      label: '中文报价清单（详情页右侧清单）',
+      type: 'pipeList',
+      hideInTable: true,
+      placeholder: '如 规格确认、包装与标识确认，一项一条',
+    },
+    {
+      key: 'checklist_en',
+      label: '英文报价清单',
+      type: 'pipeList',
+      hideInTable: true,
+    },
+    {
+      key: 'verification_zh',
+      label: '中文核实声明',
+      type: 'textarea',
+      hideInTable: true,
+      placeholder: '详情页「核实状态」一节显示的那段话',
+    },
+    {
+      key: 'verification_en',
+      label: '英文核实声明',
+      type: 'textarea',
+      hideInTable: true,
+    },
     sortOrderField(),
     { key: 'coming_soon', label: '暂未上架', type: 'switch', width: 90 },
     statusField(),
@@ -577,6 +607,51 @@ export const fcProductsConfig: CmsPageConfig = {
     { key: 'title_zh', label: '中文标题', type: 'text' },
     { key: 'subtitle', label: '英文副题', type: 'text', hideInTable: true },
     { key: 'subtitle_zh', label: '中文副题', type: 'text', hideInTable: true },
+
+    // ── 详情页文案（V11 入库）────────────────────────────────
+    // 这五项是前台型号详情页直接渲染的文字，之前只存在于前端源码常量里，
+    // 后台改不到。现在落进 fc_product 的成对列。
+    // 一律只在表单里出现（hideInTable）：列表已有 18 列，再挤就看不见型号了。
+    {
+      key: 'category_zh',
+      label: '分类（中）',
+      type: 'text',
+      hideInTable: true,
+      placeholder: '如 大流量',
+    },
+    { key: 'category_en', label: '分类（英）', type: 'text', hideInTable: true },
+    {
+      key: 'spec_zh',
+      label: '规格摘要（中）',
+      type: 'text',
+      hideInTable: true,
+      placeholder: '如 PP 滤材；外径 163.5 mm；长度 20/40/60 in',
+    },
+    { key: 'spec_en', label: '规格摘要（英）', type: 'text', hideInTable: true },
+    {
+      key: 'summary_zh',
+      label: '首屏简介（中）',
+      type: 'textarea',
+      hideInTable: true,
+      placeholder: '详情页大标题下的一段话',
+    },
+    { key: 'summary_en', label: '首屏简介（英）', type: 'textarea', hideInTable: true },
+    {
+      key: 'application_note_zh',
+      label: '应用领域说明（中）',
+      type: 'textarea',
+      hideInTable: true,
+      placeholder: '详情页「应用领域」一节的内容',
+    },
+    { key: 'application_note_en', label: '应用领域说明（英）', type: 'textarea', hideInTable: true },
+    {
+      key: 'technical_note_zh',
+      label: '复核说明（中）',
+      type: 'textarea',
+      hideInTable: true,
+      placeholder: '提示客户下单前要核对哪些参数',
+    },
+    { key: 'technical_note_en', label: '复核说明（英）', type: 'textarea', hideInTable: true },
 
     // 图集：多图上传，第一张即封面。列表列已经很多，图集只在表单里看，不占表格宽度。
     {
