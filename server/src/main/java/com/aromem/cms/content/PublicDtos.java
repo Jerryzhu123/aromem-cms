@@ -175,7 +175,17 @@ final class PublicDtos {
     /** 板块①滤芯系列条目（一次返回双语全量字段，前台按语言自取）。 */
     record SeriesItem(long id, String slug, String nameZh, String nameEn,
                       String taglineZh, String taglineEn,
-                      List<String> facetsZh, List<String> facetsEn, boolean comingSoon) {
+                      List<String> facetsZh, List<String> facetsEn, boolean comingSoon,
+                      // V11：系列级模板文案。整个系列共用一份，所以挂系列不挂型号——
+                      // 复制进每行会导致改一个字要改几十行。
+                      List<String> checklistZh, List<String> checklistEn,
+                      String verificationZh, String verificationEn,
+                      // V12：品类页「选择类别」药丸的字典（微孔折叠/大流量/多折用得到）
+                      List<SubcatItem> subcats) {
+    }
+
+    /** 子分类字典的一项：key 与型号上的 subcats 对应，两个 label 用于双语渲染 */
+    record SubcatItem(String key, String labelZh, String labelEn) {
     }
 
     record SitemapView(

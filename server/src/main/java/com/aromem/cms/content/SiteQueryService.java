@@ -477,18 +477,41 @@ public class SiteQueryService {
     public List<PublicDtos.SeriesItem> fcSeries(String locale) {
         record SeriesRow(long id, String slug, String nameZh, String nameEn,
                          String taglineZh, String taglineEn,
-                         String facetsZh, String facetsEn, boolean comingSoon) {
+                         String facetsZh, String facetsEn, boolean comingSoon,
+                         String checklistZh, String checklistEn,
+                         String verificationZh, String verificationEn,
+                         String subcatsJson) {
         }
         List<SeriesRow> rows = jdbc.sql("""
                         SELECT id, slug, name_zh AS nameZh, name_en AS nameEn,
                                tagline_zh AS taglineZh, tagline_en AS taglineEn,
-                               facets_zh AS facetsZh, facets_en AS facetsEn, coming_soon AS comingSoon
+                               facets_zh AS facetsZh, facets_en AS facetsEn, coming_soon AS comingSoon,
+                               checklist_zh AS checklistZh, checklist_en AS checklistEn,
+                               verification_zh AS verificationZh, verification_en AS verificationEn,
+                               subcats_json AS subcatsJson
                         FROM fc_series WHERE status = 'PUBLISHED' ORDER BY sort_order, id
                         """)
                 .query(SeriesRow.class).list();
         return rows.stream().map(r -> new PublicDtos.SeriesItem(
                 r.id(), r.slug(), r.nameZh(), r.nameEn(), r.taglineZh(), r.taglineEn(),
-                toFacets(r.facetsZh()), toFacets(r.facetsEn()), r.comingSoon())).toList();
+                toFacets(r.facetsZh()), toFacets(r.facetsEn()), r.comingSoon(),
+                toFacets(r.checklistZh()), toFacets(r.checklistEn()),
+                r.verificationZh(), r.verificationEn(),
+                toSubcats(r.subcatsJson()))).toList();
+    }
+
+    /** 子分类字典 JSON → 清单；脏数据或未配置时返回空清单，不影响系列本身可用。 */
+    private List<PublicDtos.SubcatItem> toSubcats(String json) {
+        if (json == null || json.isBlank()) {
+            return List.of();
+        }
+        try {
+            return objectMapper.readValue(json,
+                    objectMapper.getTypeFactory().constructCollectionType(List.class,
+                            PublicDtos.SubcatItem.class));
+        } catch (Exception e) {
+            return List.of();
+        }
     }
 
     /** "a|b|c" → List；空串/空白返回空清单。 */

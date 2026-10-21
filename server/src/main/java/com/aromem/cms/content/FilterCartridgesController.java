@@ -66,7 +66,17 @@ public class FilterCartridgesController {
             String dataStatus,
             // 泳池类专有（V10 迁移新增），工业滤芯这几项为 null
             Double sqft, String endCapTop, String endCapBottom, String oemMachine,
-            String sourceUrl) {
+            String sourceUrl,
+            // 详情文案（V11 迁移）：分类短名、规格摘要、首屏简介、应用与复核说明
+            String category, String categoryZh,
+            String spec, String specZh,
+            String summary, String summaryZh,
+            String applicationNote, String applicationNoteZh,
+            String technicalNote, String technicalNoteZh,
+            // 原站复制的详情（V12 迁移）：子分类归属 + 富文本正文
+            // 正文只在详情接口返回：单条最长 6991 字符，560 条一起吐会有几 MB。
+            // Jackson 配了 non_null，列表接口传 null 时这些键不会出现在 JSON 里。
+            List<String> subcats, String detailHtml, String detailHtmlZh) {
     }
 
     public record CrossReferenceRow(String brand, String oemModel, String relation,
@@ -111,7 +121,7 @@ public class FilterCartridgesController {
             return org.springframework.http.ResponseEntity.status(notFound.getHttpStatus())
                     .body(ApiResponse.fail(notFound));
         }
-        return org.springframework.http.ResponseEntity.ok(ApiResponse.ok(toProductView(rows.get(0))));
+        return org.springframework.http.ResponseEntity.ok(ApiResponse.ok(toProductView(rows.get(0), true)));
     }
 
     /**
@@ -156,6 +166,17 @@ public class FilterCartridgesController {
     // ------------------------------------------------------------------
 
     private ProductView toProductView(Map<String, Object> r) {
+        return toProductView(r, false);
+    }
+
+    /**
+     * 行 → DTO。
+     *
+     * @param withDetail 是否带上详情正文。列表接口一律 false——560 条型号里
+     *                   每条正文动辄几千字符，全量输出会让响应膨胀到几 MB，
+     *                   而后台列表和前台列表都不需要正文，只有详情页要。
+     */
+    private ProductView toProductView(Map<String, Object> r, boolean withDetail) {
         return new ProductView(
                 str(r.get("model")), str(r.get("slug")), str(r.get("series_slug")),
                 str(r.get("title")), str(r.get("title_zh")),
@@ -178,7 +199,15 @@ public class FilterCartridgesController {
                 str(r.get("seo_description")), str(r.get("seo_description_zh")),
                 str(r.get("data_status")),
                 num(r.get("sqft")), str(r.get("end_cap_top")), str(r.get("end_cap_bottom")),
-                str(r.get("oem_machine")), str(r.get("source_url")));
+                str(r.get("oem_machine")), str(r.get("source_url")),
+                str(r.get("category_en")), str(r.get("category_zh")),
+                str(r.get("spec_en")), str(r.get("spec_zh")),
+                str(r.get("summary_en")), str(r.get("summary_zh")),
+                str(r.get("application_note_en")), str(r.get("application_note_zh")),
+                str(r.get("technical_note_en")), str(r.get("technical_note_zh")),
+                stringList(r.get("subcats_json")),
+                withDetail ? str(r.get("detail_html_en")) : null,
+                withDetail ? str(r.get("detail_html_zh")) : null);
     }
 
     private List<String> stringList(Object json) {
