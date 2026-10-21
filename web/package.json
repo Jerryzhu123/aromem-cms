@@ -5,11 +5,9 @@
   "description": "SURMEM 官网英文站（B2B 询盘导向，六栏目静态生成站）",
   "scripts": {
     "dev": "next dev -p 3000",
-    "predev": "node scripts/fetch-products.mjs --if-missing",
-    "prebuild": "node scripts/fetch-products.mjs",
-    "pretypecheck": "node scripts/fetch-products.mjs",
     "build": "next build",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check:pool-api": "node scripts/fetch-products.mjs"
   },
   "dependencies": {
     "@ant-design/icons": "^6.0.0",

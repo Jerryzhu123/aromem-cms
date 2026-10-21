@@ -13,8 +13,12 @@ import { resolveCatalogProduct } from "@/data/darlly-adapter";
 
 type PageProps = { params: Promise<{ series: string; model: string }> };
 
-/** 静态导出：原有型号 + 复制品类新增型号的组合在构建期全部生成 */
-export function generateStaticParams() {
+/**
+ * 预渲染清单。泳池滤芯的型号清单在构建期从后台接口拉取；
+ * 后台后来新增、未在清单里的型号由动态参数按需生成，不会 404。
+ */
+export async function generateStaticParams() {
+  const poolList = await poolSlugs();
   const rows = [
     ...CATALOG_PRODUCTS.map((product) => ({
       series: product.seriesSlug,
@@ -24,8 +28,8 @@ export function generateStaticParams() {
       series,
       model: item.slug,
     })),
-    /* 泳池滤芯：件号即 URL 段，清单在构建前由后台接口拉取并落成快照 */
-    ...poolSlugs().map((slug) => ({ series: "pool", model: slug })),
+    /* 泳池滤芯：件号即网址段 */
+    ...poolList.map((slug) => ({ series: "pool", model: slug })),
   ];
   /* 去重：大流量有 5 款两边都有，重复参数会触发静态导出告警 */
   const seen = new Set<string>();
@@ -42,7 +46,7 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { series, model } = await params;
   if (series === "pool") {
-    const pool = getPoolItem(model);
+    const pool = await getPoolItem(model);
     if (!pool) return { title: "Product" };
     return {
       title: pool.name,
@@ -64,8 +68,8 @@ export default async function ProductPage({ params }: PageProps) {
 
   /* 泳池滤芯走电商式单品页（对标 darllyfilter.com 商品页） */
   if (series === "pool") {
-    const poolItem = getPoolItem(model);
-    const poolDetail = getPoolDetail(model);
+    const poolItem = await getPoolItem(model);
+    const poolDetail = await getPoolDetail(model);
     if (!poolItem || !poolDetail) notFound();
     return <PoolProductView item={poolItem} detail={poolDetail} locale="en" />;
   }

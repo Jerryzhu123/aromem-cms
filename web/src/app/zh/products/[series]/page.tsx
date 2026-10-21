@@ -42,9 +42,9 @@ export default async function ZhSeriesPage({ params }: PageProps) {
     return <DarllyCategoryView category={darlly} locale="zh" />;
   }
 
-  /* 泳池滤芯：版式与其他品类一致，数据来自后台接口的构建期快照（lib/pool-source） */
+  /* 泳池滤芯：版式与其他品类一致，数据运行时从后台接口取（lib/pool-source） */
   if (series === "pool") {
-    const pool = poolCategory();
+    const pool = await poolCategory();
     if (pool.items.length > 0) {
       return <DarllyCategoryView category={pool} locale="zh" />;
     }

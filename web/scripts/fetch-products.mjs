@@ -1,21 +1,19 @@
 /**
- * 构建期取数：从后台接口拉泳池滤芯全量，落成一份 JSON 快照。
+ * 人工核对工具：从后台接口拉一份泳池滤芯数据，落盘供比对。
  *
- * 为什么在构建前拉、而不是页面里直接 fetch：
- *   1. 静态导出（output: "export"）下 495 个页面在构建期一次性生成，
- *      页面里各自 fetch 会重复请求上百次；
- *   2. 落盘后可以 diff、可以回滚，出问题知道是哪一次的数据；
- *   3. 接口临时不可用时还能用上一次的快照，构建不至于直接失败。
+ * 注意：本脚本已不参与构建。
+ *   数据改为页面运行时直接取接口（见 src/lib/pool-api.ts），构建不再依赖
+ *   任何预先落盘的快照，因此 package.json 里的 prebuild / predev / pretypecheck
+ *   均已移除。留着这个脚本是为了排障时能一眼看到接口到底返回了什么：
+ *   `npm run check:pool-api` 之后看 src/data/__generated__/pool.json。
  *
  * 数据流向：
- *   GET /api/v1/filter-cartridges/products?series=pool   495 条型号 + 规格
- *   GET /api/v1/cross-reference?series=pool              1079 条替换件号
- *   ↓ 合并成前台既有的 PoolItem / PoolDetail 形状
- *   src/data/__generated__/pool.json
+ *   GET /api/v1/filter-cartridges/products?series=pool   型号 + 规格
+ *   GET /api/v1/cross-reference?series=pool              替换件号
+ *   ↓ 合并成 PoolItem / PoolDetail 形状
+ *   src/data/__generated__/pool.json（仅供人工比对，页面不读）
  *
- * 兜底顺序：接口 → 上次快照 → 编译期常量（pool.ts / pool-detail.ts）。
- * 第三级兜底保证「后台连不上也一定能出站」，代价是数据退回旧值，
- * 因此失败时会把警告打到 stderr，构建日志里一眼能看到。
+ * 接口地址可用环境变量 POOL_API_BASE 覆盖，缺省走公网域名。
  *
  * 用法：node scripts/fetch-products.mjs
  */
