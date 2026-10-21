@@ -21,7 +21,7 @@ import { revalidateTag } from "next/cache";
 import { NextResponse, type NextRequest } from "next/server";
 
 /** 允许吊销的标签清单。新增数据源时在这里登记，不做通配。 */
-const ALLOWED_TAGS = new Set(["pool"]);
+const ALLOWED_TAGS = new Set(["pool", "catalog"]);
 
 export const dynamic = "force-dynamic";
 
@@ -41,10 +41,23 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ code: 401, msg: "密钥不正确" }, { status: 401 });
   }
 
-  const tag = request.nextUrl.searchParams.get("tag") ?? "pool";
-  if (!ALLOWED_TAGS.has(tag)) {
+  // 支持一次吊销多个标签：后台改一条商品会同时影响泳池页与工业滤芯页，
+  // 分两次请求没有意义，还会多一次往返。写法 ?tag=pool,catalog
+  const raw = request.nextUrl.searchParams.get("tag") ?? "pool";
+  const tags = raw
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean);
+  if (tags.length === 0) {
+    return NextResponse.json({ code: 400, msg: "tag 不能为空" }, { status: 400 });
+  }
+  const unknown = tags.filter((t) => !ALLOWED_TAGS.has(t));
+  if (unknown.length > 0) {
     return NextResponse.json(
-      { code: 400, msg: `未知标签 ${tag}，允许的取值：${[...ALLOWED_TAGS].join(", ")}` },
+      {
+        code: 400,
+        msg: `未知标签 ${unknown.join(", ")}，允许的取值：${[...ALLOWED_TAGS].join(", ")}`,
+      },
       { status: 400 },
     );
   }
@@ -54,11 +67,13 @@ export async function POST(request: NextRequest) {
   // 不提供陈旧内容，下一个请求直接阻塞式重新渲染。
   // 这里必须用它而不是推荐值 "max"——后台改完，运营马上刷新核对，
   // 若走「先给旧内容、后台再更新」，第一次看到的还是旧数据，会误判成没生效。
-  revalidateTag(tag, { expire: 0 });
+  for (const tag of tags) {
+    revalidateTag(tag, { expire: 0 });
+  }
 
   return NextResponse.json({
     code: 200,
     msg: "success",
-    data: { tag, at: new Date().toISOString() },
+    data: { tags, at: new Date().toISOString() },
   });
 }

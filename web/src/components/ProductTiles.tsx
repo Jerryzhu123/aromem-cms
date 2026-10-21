@@ -19,7 +19,7 @@
  */
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { getSeries, hasSeries } from "@/data/catalog";
+import { hasSeries, seriesKind } from "@/data/catalog";
 import { tileIconOf } from "@/data/tiles";
 import { fetchFilterSeries, type FilterSeries } from "@/lib/content";
 
@@ -40,11 +40,12 @@ interface TileView {
 
 /**
  * 判断某个分类属于哪条产品线。
- * 本地系列知识库里有 kind（filter / ro）；后台新加、本地还不认识的 slug
- * 默认归到滤芯线——那是主产品线，放错也只是多一格，不会被藏起来。
+ * 系列与产品线的对应关系是路由约定（见 data/catalog.ts 的 seriesKind）；
+ * 后台新加、本地还不认识的 slug 默认归到滤芯线——那是主产品线，
+ * 放错也只是多一格，不会被藏起来。
  */
 function lineOf(slug: string): "filter" | "ro" {
-  return getSeries(slug)?.kind ?? "filter";
+  return seriesKind(slug);
 }
 
 export default function ProductTiles({

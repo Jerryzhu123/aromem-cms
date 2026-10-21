@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ProductView from "@/components/products/ProductView";
 import DarllyDetailView from "@/components/products/DarllyDetailView";
-import { CATALOG_PRODUCTS, getSeries, pick } from "@/data/catalog";
+import { pick } from "@/data/catalog";
+import { catalogProductParams, getSeries } from "@/lib/catalog-source";
 import { DARLLY_ITEMS, getDarllyCategory, getDarllyItem } from "@/data/darlly";
 import { getDarllyDetail } from "@/data/darlly-detail";
 import PoolProductView from "@/components/products/PoolProductView";
@@ -16,10 +17,8 @@ type PageProps = { params: Promise<{ series: string; model: string }> };
 export async function generateStaticParams() {
   const poolList = await poolSlugs();
   const rows = [
-    ...CATALOG_PRODUCTS.map((product) => ({
-      series: product.seriesSlug,
-      model: product.slug,
-    })),
+    /* 工业滤芯 25 条：2026-10-21 起在构建期从后台接口取，不再是编译期常量 */
+    ...(await catalogProductParams()),
     ...DARLLY_ITEMS.map(({ series, item }) => ({
       series,
       model: item.slug,
@@ -50,7 +49,7 @@ export async function generateMetadata({
       alternates: { canonical: `/zh/products/pool/${pool.slug}` },
     };
   }
-  const product = resolveCatalogProduct(series, model);
+  const product = await resolveCatalogProduct(series, model);
   if (!product) return { title: "产品详情" };
   return {
     title: product.name.zh,
@@ -70,8 +69,8 @@ export default async function ZhProductPage({ params }: PageProps) {
     return <PoolProductView item={poolItem} detail={poolDetail} locale="zh" />;
   }
 
-  const item = getSeries(series);
-  const product = resolveCatalogProduct(series, model);
+  const item = await getSeries(series);
+  const product = await resolveCatalogProduct(series, model);
   if (!item || !product) notFound();
 
   /* darlly 系列走原站详情页版式；没有正文数据的型号继续用站内模板 */

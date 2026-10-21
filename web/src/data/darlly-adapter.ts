@@ -17,9 +17,9 @@ import {
   FILTER_APPLICATION,
   FILTER_CHECKLIST,
   FILTER_VERIFICATION,
-  getProduct,
 } from "./catalog";
 import { type DarllyCategory, type DarllyItem, getDarllyCategory } from "./darlly";
+import { getProduct } from "@/lib/catalog-source";
 
 /** 参数暂缺时的中性表述（不假装有数据） */
 const SPEC_PENDING: Bilingual = {
@@ -59,14 +59,17 @@ export function toCatalogProduct(
  * 详情页取数。
  *
  * 三个已复制的品类以 darlly 文案为准（列表页显示的就是这套文案，点进来
- * 必须是同一套）。若站内旧清单里有同型号，则把旧清单里更扎实的字段
+ * 必须是同一套）。若后台库里有同型号，则把库里更扎实的字段
  * （参考规格、技术提醒、核实声明）合并进来，避免参数信息白白丢掉。
+ *
+ * 为什么是异步：库里的型号数据 2026-10-21 起在渲染时从接口取，
+ * 不再是编译期常量快照；darlly 那 50 条仍是常量，同步读取。
  */
-export function resolveCatalogProduct(
+export async function resolveCatalogProduct(
   seriesSlug: string,
   modelSlug: string,
-): CatalogProduct | undefined {
-  const existing = getProduct(seriesSlug, modelSlug);
+): Promise<CatalogProduct | undefined> {
+  const existing = await getProduct(seriesSlug, modelSlug);
 
   const category = getDarllyCategory(seriesSlug);
   const item = category?.items.find((i) => i.slug === modelSlug);

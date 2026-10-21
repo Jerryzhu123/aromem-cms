@@ -24,11 +24,10 @@
  */
 
 import { cache } from "react";
+import { API_BASE } from "@/lib/api-base";
 
 /** 缓存标签：后台改动后吊销这一组，只影响泳池商品页，不动其余页面 */
 export const POOL_CACHE_TAG = "pool";
-
-const API_BASE = (process.env.POOL_API_BASE || "https://www.surmem.com").replace(/\/$/, "");
 
 /** 兜底过期秒数：吊销请求万一没送到，最长一小时后自动恢复新鲜 */
 const FALLBACK_TTL_SECONDS = 3600;
