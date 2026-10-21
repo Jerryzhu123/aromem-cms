@@ -200,6 +200,8 @@ export const CmsTablePage: React.FC<{ config: CmsPageConfig }> = ({
   const [keyword, setKeyword] = useState<string>('');
   const [locale, setLocale] = useState<string | undefined>();
   const [status, setStatus] = useState<string | undefined>();
+  /** 所属系列筛选（只有带 series_slug 字段的域才有这个筛选条）。 */
+  const [series, setSeries] = useState<string | undefined>();
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -215,6 +217,12 @@ export const CmsTablePage: React.FC<{ config: CmsPageConfig }> = ({
     [fields],
   );
   const statusEnabled = useMemo(() => hasStatus(fields), [fields]);
+
+  /** 「所属系列」筛选条：只在当前域确实有 series_slug 且选项来自别处时才出现。 */
+  const seriesField = useMemo(
+    () => fields.find((f) => f.key === 'series_slug' && usesDomainOptions(f)),
+    [fields],
+  );
 
   /** 下拉域选项缓存：optionsDomain → options。 */
   const [domainOptions, setDomainOptions] = useState<
@@ -254,6 +262,13 @@ export const CmsTablePage: React.FC<{ config: CmsPageConfig }> = ({
   const [remoteOptions, setRemoteOptions] = useState<
     Record<string, { label: string; value: any }[]>
   >({});
+
+  /** 顶部「所属系列」分段控制器的选项：直接复用该字段的下拉选项。 */
+  const seriesOptions = useMemo(
+    () =>
+      seriesField ? domainOptions[optionsCacheKey(seriesField)] ?? [] : [],
+    [seriesField, domainOptions],
+  );
 
   // 抽屉一打开就把小表的下拉选项备好，否则已有值会先显示成裸 slug/id
   useEffect(() => {
@@ -684,7 +699,7 @@ export const CmsTablePage: React.FC<{ config: CmsPageConfig }> = ({
         columns={columns}
         search={false}
         // params 变化会自动触发重新请求（比闭包状态 + 手动 reload 可靠）
-        params={{ keyword, locale, status }}
+        params={{ keyword, locale, status, series }}
         pagination={{ defaultPageSize: 10, showSizeChanger: true }}
         rowSelection={
           !readOnly && statusEnabled
@@ -704,7 +719,7 @@ export const CmsTablePage: React.FC<{ config: CmsPageConfig }> = ({
               )
             : undefined
         }
-        request={async ({ current, pageSize, keyword: kw, locale: lc, status: st }: any) => {
+        request={async ({ current, pageSize, keyword: kw, locale: lc, status: st, series: sr }: any) => {
           try {
             const res = await cmsApi.list(domain, {
               page: current,
@@ -712,6 +727,7 @@ export const CmsTablePage: React.FC<{ config: CmsPageConfig }> = ({
               keyword: kw || undefined,
               locale: lc,
               status: st,
+              series: sr,
             });
             return {
               data: res.items,
@@ -724,11 +740,19 @@ export const CmsTablePage: React.FC<{ config: CmsPageConfig }> = ({
           }
         }}
         headerTitle={
-          <>
+          // 筛选条会随屏宽换行，避免小屏时把搜索框和新增按钮挤出去
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              gap: 8,
+            }}
+          >
             <Input.Search
               allowClear
               placeholder="关键词搜索"
-              style={{ width: 220, marginRight: 12 }}
+              style={{ width: 220 }}
               onSearch={(v) => {
                 setKeyword(v);
                 actionRef.current?.reload();
@@ -736,7 +760,6 @@ export const CmsTablePage: React.FC<{ config: CmsPageConfig }> = ({
             />
             {formFields.some((f) => f.key === 'locale') && (
               <Segmented
-                style={{ marginRight: 12 }}
                 value={locale ?? 'ALL'}
                 options={[
                   { label: '全部语言', value: 'ALL' },
@@ -761,7 +784,20 @@ export const CmsTablePage: React.FC<{ config: CmsPageConfig }> = ({
                 }}
               />
             )}
-          </>
+            {seriesField && seriesOptions.length > 0 && (
+              <Segmented
+                value={series ?? 'ALL'}
+                options={[
+                  { label: '全部系列', value: 'ALL' },
+                  ...seriesOptions,
+                ]}
+                onChange={(v) => {
+                  setSeries(v === 'ALL' ? undefined : String(v));
+                  actionRef.current?.reload();
+                }}
+              />
+            )}
+          </div>
         }
         toolBarRender={() => [
           ...(extraToolbar ? [extraToolbar] : []),
