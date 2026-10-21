@@ -68,7 +68,11 @@ public class AdminContentService {
             Map.entry("home-tiles", Set.of("board", "name_zh", "name_en", "image_url", "link_url",
                     "sort_order", "status")),
             Map.entry("fc-series", Set.of("slug", "name_zh", "name_en", "tagline_zh", "tagline_en",
-                    "facets_zh", "facets_en", "icon_url", "sort_order", "coming_soon", "status")),
+                    "facets_zh", "facets_en", "icon_url", "sort_order", "coming_soon", "status",
+                    // V11 系列级模板文案（清单竖线分隔 / 核实声明段落）
+                    "checklist_zh", "checklist_en", "verification_zh", "verification_en",
+                    // V12 子分类字典 [{"key","labelZh","labelEn"}]
+                    "subcats_json")),
             Map.entry("rfq", Set.of("status")),
             Map.entry("fc-products", Set.of("series_slug", "model", "slug", "title", "title_zh",
                     "subtitle", "subtitle_zh", "gallery_json", "overall_length", "overall_length_unit",
@@ -80,7 +84,13 @@ public class AdminContentService {
                     "certifications_json", "seo_title", "seo_title_zh", "seo_description",
                     "seo_description_zh", "data_status", "status", "sort_order",
                     // V10 泳池类专有字段
-                    "sqft", "end_cap_top", "end_cap_bottom", "oem_machine", "source_url")),
+                    "sqft", "end_cap_top", "end_cap_bottom", "oem_machine", "source_url",
+                    // V11 工业滤芯详情文案（每个型号独有）
+                    "category_zh", "category_en", "spec_zh", "spec_en",
+                    "summary_zh", "summary_en", "application_note_zh", "application_note_en",
+                    "technical_note_zh", "technical_note_en",
+                    // V12 原站复制的产品详情（富文本正文 + 子分类归属）
+                    "detail_html_zh", "detail_html_en", "subcats_json")),
             Map.entry("cross-reference", Set.of("brand", "oem_model", "relation", "note", "note_zh",
                     "surmem_model", "series_slug", "product_slug", "status", "sort_order")),
             Map.entry("media", Set.<String>of()));
@@ -130,9 +140,9 @@ public class AdminContentService {
         return cols;
     }
 
-    /** 分页列表：支持 locale 过滤、关键词（title/name LIKE）、status 过滤。 */
+    /** 分页列表：支持 locale / 所属系列 / 关键词（title/name LIKE）/ status 过滤。 */
     public Map<String, Object> list(String domain, String locale, int page, int size,
-                                    String keyword, String status) {
+                                    String keyword, String status, String series) {
         String table = tableOf(domain);
         List<Object> args = new ArrayList<>();
         StringBuilder where = new StringBuilder(" WHERE 1=1");
@@ -140,6 +150,12 @@ public class AdminContentService {
         if (locale != null && !locale.isBlank() && hasLocale) {
             where.append(" AND locale = ?");
             args.add(locale);
+        }
+        // 系列筛选：后台型号表从 495 条涨到 545 条后，混在一个列表里翻不动，
+        // 后台加了「所属系列」分段控制器。只对真有 series_slug 列的表生效。
+        if (series != null && !series.isBlank() && tableHasSeries(table)) {
+            where.append(" AND series_slug = ?");
+            args.add(series);
         }
         if (keyword != null && !keyword.isBlank()) {
             // 关键词可命中多列：泳池滤芯 495 条，运营常常按「原厂机型」（Jacuzzi、Jandy）
@@ -275,6 +291,11 @@ public class AdminContentService {
                 && !table.equals("fc_series") && !table.equals("rfq_submission")
                 && !table.equals("fc_product") && !table.equals("fc_cross_reference")
                 && !table.equals("home_tile");
+    }
+
+    /** 哪些表带 series_slug 列（决定「所属系列」筛选能否下推成 WHERE）。 */
+    private boolean tableHasSeries(String table) {
+        return "fc_product".equals(table) || "fc_cross_reference".equals(table);
     }
 
     private boolean hasStatus(String table) {

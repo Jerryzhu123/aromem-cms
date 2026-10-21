@@ -33,10 +33,13 @@ public class AdminContentController {
 
     private final AdminContentService service;
     private final JdbcTemplate jdbc;
+    private final FrontCacheNotifier notifier;
 
-    public AdminContentController(AdminContentService service, JdbcTemplate jdbc) {
+    public AdminContentController(AdminContentService service, JdbcTemplate jdbc,
+                                  FrontCacheNotifier notifier) {
         this.service = service;
         this.jdbc = jdbc;
+        this.notifier = notifier;
     }
 
     @GetMapping("/{domain}")
@@ -46,8 +49,9 @@ public class AdminContentController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) String status) {
-        return ApiResponse.ok(service.list(domain, locale, page, size, keyword, status));
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String series) {
+        return ApiResponse.ok(service.list(domain, locale, page, size, keyword, status, series));
     }
 
     @GetMapping("/{domain}/{id}")
@@ -59,6 +63,7 @@ public class AdminContentController {
     public ApiResponse<Map<String, Object>> create(
             @PathVariable String domain, @RequestBody Map<String, Object> body) {
         long id = service.create(domain, body);
+        notifier.notifyChanged(domain);
         return ApiResponse.ok(Map.of("id", id));
     }
 
@@ -66,12 +71,14 @@ public class AdminContentController {
     public ApiResponse<Void> update(
             @PathVariable String domain, @PathVariable long id, @RequestBody Map<String, Object> body) {
         service.update(domain, id, body);
+        notifier.notifyChanged(domain);
         return ApiResponse.ok();
     }
 
     @DeleteMapping("/{domain}/{id}")
     public ApiResponse<Void> delete(@PathVariable String domain, @PathVariable long id) {
         service.delete(domain, id);
+        notifier.notifyChanged(domain);
         return ApiResponse.ok();
     }
 
@@ -92,6 +99,7 @@ public class AdminContentController {
             long id = ((Number) raw).longValue();
             jdbc.update("UPDATE " + table + " SET status = ? WHERE id = ?", status, id);
         }
+        notifier.notifyChanged(domain);
         return ApiResponse.ok();
     }
 }

@@ -102,6 +102,28 @@ export const CERT_SUGGESTIONS = [
   'WRAS',
 ];
 
+/**
+ * 子分类取值（微孔折叠 / 大流量 / 多折 三个品类）。
+ *
+ * 存的是 key 而不是显示名，因为同名的子分类在不同系列下显示文案可能不同
+ * （例如 key=dl 在「多折」里叫「DL系列多折滤芯」）。显示名由「滤芯系列」表的
+ * subcats_json 字典统一维护，这里只做输入提示，允许自由追加新 key。
+ */
+export const SUBCAT_SUGGESTIONS = [
+  'pp',
+  'pes',
+  'ptfe',
+  'nylon',
+  'gf',
+  'pfa',
+  'pvdf',
+  'hiflow',
+  'bag',
+  'oil',
+  'dl',
+  'hc',
+];
+
 const toOptions = (list: string[]) =>
   list.map((v) => ({ label: v, value: v }));
 
@@ -447,6 +469,18 @@ export const fcSeriesConfig: CmsPageConfig = {
       type: 'textarea',
       hideInTable: true,
     },
+
+    // ── 子分类字典（V12 入库）──────────────────────────────────
+    // 品类页「选择类别」那一排药丸的名字与顺序。存 JSON 数组，
+    // 每项 { key, labelZh, labelEn }：key 与型号上的 subcats_json 对应。
+    // 只有微孔折叠 / 大流量 / 多折这三个复制自原站的品类用得到，其余系列留空。
+    {
+      key: 'subcats_json',
+      label: '子分类字典（JSON）',
+      type: 'textarea',
+      hideInTable: true,
+      placeholder: '[{"key":"pp","labelZh":"PP","labelEn":"PP"}]',
+    },
     sortOrderField(),
     { key: 'coming_soon', label: '暂未上架', type: 'switch', width: 90 },
     statusField(),
@@ -652,6 +686,31 @@ export const fcProductsConfig: CmsPageConfig = {
       placeholder: '提示客户下单前要核对哪些参数',
     },
     { key: 'technical_note_en', label: '复核说明（英）', type: 'textarea', hideInTable: true },
+
+    // ── 原站复制的详情正文（V12 入库）──────────────────────────
+    // 微孔折叠 / 大流量 / 多折 三个品类是逐字复制原站得到的，带一份完整的
+    // 古腾堡富文本正文（含内联样式的参数表、图集、锚点标题）。之前只存在于
+    // 前端源码里，改一个字要重新构建部署；现在落进 fc_product 的两个长文本列。
+    {
+      key: 'subcats_json',
+      label: '所属子分类',
+      type: 'tags',
+      options: toOptions(SUBCAT_SUGGESTIONS),
+      placeholder: '如 PES / Nylon / GF，可多选（原站一个型号可属多个子分类）',
+      hideInTable: true,
+    },
+    {
+      key: 'detail_html_zh',
+      label: '详情正文（中）',
+      type: 'richtext',
+      hideInTable: true,
+    },
+    {
+      key: 'detail_html_en',
+      label: '详情正文（英）',
+      type: 'richtext',
+      hideInTable: true,
+    },
 
     // 图集：多图上传，第一张即封面。列表列已经很多，图集只在表单里看，不占表格宽度。
     {
