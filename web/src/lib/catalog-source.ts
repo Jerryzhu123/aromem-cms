@@ -127,14 +127,31 @@ interface CatalogData {
  * 用 cache 包裹：构建期生成上百个页面会反复调用，同一渲染上下文内只取一次；
  * 跨页面则由 fetch 自身的缓存承接。
  */
-export const loadCatalogData = cache(async (): Promise<CatalogData> => {
-  const rawSeries = await getJson<CatalogApiSeries[]>(`${API_BASE}/api/v1/fc-series`);
-  const rows = (Array.isArray(rawSeries) ? rawSeries : []).filter(
-    (s) => s.slug && s.slug !== POOL_SLUG,
-  );
-  if (rows.length === 0) {
+/**
+ * 系列清单原样取一次（含 pool）。
+ *
+ * 为什么单独拆出来：产品中心页要展示「全部产品线」的格子，池也是其中一格；
+ * 但池的 495 条型号不能跟着拉——catalog-source 的型号清单必须排除池。
+ * 所以系列行与型号分开：本函数只拿系列行，loadCatalogData 在此基础上再排除池。
+ *
+ * 同一个 URL 的 fetch 在 Next 里会被请求级去重，两处调用不会真的发两次。
+ */
+const loadSeriesRows = cache(async (): Promise<CatalogApiSeries[]> => {
+  const raw = await getJson<CatalogApiSeries[]>(`${API_BASE}/api/v1/fc-series`);
+  if (!Array.isArray(raw) || raw.length === 0) {
     throw new Error(
       "系列接口返回空清单，拒绝以空数据渲染（检查后台「滤芯系列」是否有 PUBLISHED 记录）",
+    );
+  }
+  return raw.filter((s) => Boolean(s.slug));
+});
+
+export const loadCatalogData = cache(async (): Promise<CatalogData> => {
+  const rawSeries = await loadSeriesRows();
+  const rows = rawSeries.filter((s) => s.slug !== POOL_SLUG);
+  if (rows.length === 0) {
+    throw new Error(
+      "排除泳池后没有可用系列（检查后台「滤芯系列」的发布状态）",
     );
   }
 
@@ -203,6 +220,21 @@ export const loadCatalogData = cache(async (): Promise<CatalogData> => {
 /** 全部系列（不含泳池），顺序即后台的 sort_order */
 export async function catalogSeries(): Promise<CatalogSeries[]> {
   return (await loadCatalogData()).series;
+}
+
+/**
+ * 全部系列（**含泳池**），顺序即后台 sort_order。
+ *
+ * 给产品中心页的格子用：那里要按产品线列出所有品类，池也是滤芯线的一格。
+ * 只返回系列行，不带型号，所以不会把泳池 495 条一起拉下来。
+ */
+export async function allSeries(): Promise<CatalogSeries[]> {
+  return (await loadSeriesRows()).map((r) => ({
+    slug: r.slug,
+    kind: kindOf(r.slug),
+    name: bilingual(r.nameEn, r.nameZh),
+    tagline: bilingual(r.taglineEn, r.taglineZh),
+  }));
 }
 
 /** 系列页路由清单 */

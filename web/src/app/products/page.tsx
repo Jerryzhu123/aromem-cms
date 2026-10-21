@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import ProductTiles from "@/components/ProductTiles";
 import { seriesKind } from "@/data/catalog";
 import { PRODUCTS } from "@/data/site";
-import { catalogSeries } from "@/lib/catalog-source";
+import { allSeries } from "@/lib/catalog-source";
 
 export const metadata: Metadata = {
   title: "Products",
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
  * 第一条是工业滤芯线（filter），第二条是反渗透膜线（ro）。
  */
 export default async function ProductsPage() {
-  const all = await catalogSeries();
+  const all = await allSeries();
   const lines = [
     { kind: "filter" as const, copy: PRODUCTS.lines[0] },
     { kind: "ro" as const, copy: PRODUCTS.lines[1] },
