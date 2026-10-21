@@ -558,7 +558,19 @@ export const fcProductsConfig: CmsPageConfig = {
   domain: 'fc-products',
   title: '滤芯型号',
   fields: [
-    seriesSlugField(),
+    // 所属系列：一共 7 个系列，点一下即切换，比下拉找一次更快。
+    // 选项来自「滤芯系列」表，后台新增系列后这里会自动多一项，无需改代码。
+    {
+      key: 'series_slug',
+      label: '所属系列',
+      type: 'segmented',
+      optionsDomain: 'fc-series',
+      optionsLabelKey: 'name_zh',
+      optionsValueKey: 'slug',
+      required: true,
+      fullRow: true,
+      width: 110,
+    },
     { key: 'model', label: '型号', type: 'text', required: true, width: 110 },
     { key: 'slug', label: '标识', type: 'text', width: 110 },
     { key: 'title', label: '英文标题', type: 'text' },

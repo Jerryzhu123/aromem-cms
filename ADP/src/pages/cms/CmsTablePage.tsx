@@ -134,6 +134,8 @@ export interface FieldDef {
   itemAddLabel?: string;
   /** 仅 file 类型有效：上传成功后自动把字节数写进同表单的该字段。 */
   sizeKey?: string;
+  /** 强制独占整行（选项多的分段控制器需要足够宽度）。 */
+  fullRow?: boolean;
   required?: boolean;
   hideInTable?: boolean;
   hideInForm?: boolean;
@@ -143,6 +145,15 @@ export interface FieldDef {
   /** 新增时的预填默认值 */
   defaultValue?: any;
 }
+
+/** 下拉 / 分段控制器 / 按钮组都可以从别的管理域取选项。 */
+const usesDomainOptions = (f: FieldDef): boolean =>
+  Boolean(f.optionsDomain) &&
+  (f.type === 'select' || f.type === 'segmented' || f.type === 'radio');
+
+/** 跨域选项的缓存键：同一个域取不同字段（id 或 slug）要分开存。 */
+const optionsCacheKey = (f: FieldDef): string =>
+  `${f.optionsDomain ?? ''}:${f.optionsValueKey ?? 'id'}`;
 
 export interface CmsPageConfig {
   domain: string;
@@ -248,9 +259,9 @@ export const CmsTablePage: React.FC<{ config: CmsPageConfig }> = ({
   useEffect(() => {
     if (!drawerOpen) return;
     for (const f of formFields) {
-      if (f.type === 'select' && f.optionsDomain && !f.optionsRemote) {
+      if (usesDomainOptions(f) && !f.optionsRemote) {
         void loadDomainOptions(
-          f.optionsDomain,
+          f.optionsDomain!,
           f.optionsLabelKey ?? 'name',
           f.optionsValueKey,
         );
@@ -262,14 +273,9 @@ export const CmsTablePage: React.FC<{ config: CmsPageConfig }> = ({
   // 首屏也备一次：列表里的 select 列要靠它把 slug/id 翻成中文名
   useEffect(() => {
     for (const f of fields) {
-      if (
-        f.type === 'select' &&
-        f.optionsDomain &&
-        !f.optionsRemote &&
-        !f.options
-      ) {
+      if (usesDomainOptions(f) && !f.optionsRemote && !f.options) {
         void loadDomainOptions(
-          f.optionsDomain,
+          f.optionsDomain!,
           f.optionsLabelKey ?? 'name',
           f.optionsValueKey,
         );
@@ -405,22 +411,35 @@ export const CmsTablePage: React.FC<{ config: CmsPageConfig }> = ({
             defaultChecked={false}
           />
         );
-      case 'segmented':
+      case 'segmented': {
+        // 选项可以写死，也可以来自别的管理域（如「所属系列」= fc-series 的 slug）
+        const opts = f.options
+          ? f.options
+          : usesDomainOptions(f)
+            ? domainOptions[optionsCacheKey(f)] ?? []
+            : [];
         return (
           <Segmented
             block
-            options={f.options ?? []}
-            style={{ width: '100%' }}
+            options={opts}
+            style={{ width: '100%', overflowX: 'auto' }}
           />
         );
-      case 'radio':
+      }
+      case 'radio': {
+        const opts = f.options
+          ? f.options
+          : usesDomainOptions(f)
+            ? domainOptions[optionsCacheKey(f)] ?? []
+            : [];
         return (
           <Radio.Group
             optionType="button"
             buttonStyle="solid"
-            options={f.options ?? []}
+            options={opts}
           />
         );
+      }
       case 'select': {
         if (f.optionsDomain) {
           const cacheKey = `${f.optionsDomain}:${f.optionsValueKey ?? 'id'}`;
@@ -623,12 +642,14 @@ export const CmsTablePage: React.FC<{ config: CmsPageConfig }> = ({
         const map = new Map(f.options.map((o) => [o.value, o.label]));
         base.render = (_, row) => map.get(row[f.key]) ?? row[f.key] ?? '-';
       }
-      // 跨域下拉：列里存的是 slug/id，靠已缓存的选项翻成中文名
-      if (f.type === 'select' && f.optionsDomain && !f.options) {
-        const opts =
-          domainOptions[`${f.optionsDomain}:${f.optionsValueKey ?? 'id'}`] ??
-          [];
-        const map = new Map(opts.map((o) => [o.value, o.label]));
+      // 跨域选项（下拉 / 分段）：列里存的是 slug/id，靠已缓存的选项翻成中文名
+      if (usesDomainOptions(f) && !f.options) {
+        const map = new Map(
+          (domainOptions[optionsCacheKey(f)] ?? []).map((o) => [
+            o.value,
+            o.label,
+          ]),
+        );
         base.render = (_, row) => map.get(row[f.key]) ?? row[f.key] ?? '-';
       }
       return base;
@@ -778,7 +799,7 @@ export const CmsTablePage: React.FC<{ config: CmsPageConfig }> = ({
                 <Col
                   key={f.key}
                   span={
-                    FULL_WIDTH_TYPES.includes(f.type) ? 24 : 12
+                    FULL_WIDTH_TYPES.includes(f.type) || f.fullRow ? 24 : 12
                   }
                 >
                   <Form.Item
