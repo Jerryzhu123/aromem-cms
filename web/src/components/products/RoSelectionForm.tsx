@@ -290,7 +290,14 @@ export default function RoSelectionForm({
               <Input.TextArea rows={4} placeholder={t.notesPh} />
             </Form.Item>
 
-            <button type="submit" className="btn" disabled={submitting}>
+            {/* 同 QuoteForm：不用 type="submit"。水合未完成时原生提交会整页刷新，
+                选型参数全丢、接口一次都没发。详见 QuoteForm 里的注释。 */}
+            <button
+              type="button"
+              className="btn"
+              disabled={submitting}
+              onClick={() => form.submit()}
+            >
               {submitting ? t.sending : t.submit}
             </button>
 

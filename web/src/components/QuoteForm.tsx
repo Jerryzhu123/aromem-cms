@@ -218,7 +218,19 @@ export default function QuoteForm({ locale = "en" }: { locale?: "en" | "zh" }) {
         <Input.TextArea rows={5} placeholder={t.messagePh} />
       </Form.Item>
 
-      <button type="submit" className="btn" disabled={submitting}>
+      {/* 按钮故意用 type="button" + form.submit()，不用 type="submit"。
+          静态预渲染的页面在这台服务器上要约 17 秒才水合完成（下行带宽是瓶颈），
+          水合之前点原生提交按钮，浏览器会按 HTML 默认行为整页 GET 一次：
+          表单被清空、/api/v1/rfq 一个字节都没发、客户的询盘直接没了。
+          换成 type="button" 后，水合前点击什么都不会发生（既不刷新也不清空），
+          水合后行为与原来完全一致。代价是按 Enter 不再隐式提交，
+          而原本水合前按 Enter 同样是整页刷新丢单，所以是净收益。 */}
+      <button
+        type="button"
+        className="btn"
+        disabled={submitting}
+        onClick={() => form.submit()}
+      >
         {submitting ? t.sending : t.submit}
       </button>
       <p className="notice" style={{ marginTop: 14 }}>

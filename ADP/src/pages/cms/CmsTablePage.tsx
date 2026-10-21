@@ -109,6 +109,20 @@ export function parseJsonArray(raw: unknown): any[] {
   }
 }
 
+/**
+ * 把后端返回的时间显示成「YYYY-MM-DD HH:mm」。
+ *
+ * 后端 Jackson 直接序列化 datetime(3)，出来是 2026-10-21T23:43:08.489，
+ * 列表里那个 T 和小数点后面三位毫秒对运营没有意义，还占宽度。
+ * 不用 dayjs 转：值本身不带时区偏移（就是服务器本地时间），
+ * 交给 dayjs 反而可能按浏览器时区再挪一次，字符串裁切最稳。
+ */
+export function fmtDateTime(raw: unknown): string {
+  const s = String(raw ?? '').trim();
+  if (!s) return '-';
+  return s.replace('T', ' ').slice(0, 16);
+}
+
 export interface FieldDef {
   /** 库列名（snake_case），同时是提交字段名与表格 dataIndex。 */
   key: string;
@@ -139,6 +153,19 @@ export interface FieldDef {
   required?: boolean;
   hideInTable?: boolean;
   hideInForm?: boolean;
+  /**
+   * 表格里把原始值翻译成中文。如询盘的 request_type 库里存 quote / sample，
+   * 直接显示英文，运营每次都要在脑子里翻译一遍。
+   */
+  textMap?: Record<string, string>;
+  /**
+   * 表格里把后端返回的 ISO 时间（2026-10-21T23:43:08.489）显示成
+   * 「2026-10-21 23:43」。后端没有统一改序列化格式，因为那会影响所有表，
+   * 只在这类确实要给人看的时间列上做显示层处理，范围可控。
+   */
+  dateTime?: boolean;
+  /** 表单里只读：能看到但不能改（如提交时间，改了没有意义还会误导）。 */
+  readOnly?: boolean;
   /** 表格列宽 */
   width?: number;
   placeholder?: string;
@@ -415,7 +442,9 @@ export const CmsTablePage: React.FC<{ config: CmsPageConfig }> = ({
   const renderField = (f: FieldDef) => {
     switch (f.type) {
       case 'textarea':
-        return <Input.TextArea rows={3} placeholder={f.placeholder} />;
+        return (
+          <Input.TextArea rows={3} placeholder={f.placeholder} disabled={f.readOnly} />
+        );
       case 'number':
         return <InputNumber style={{ width: '100%' }} />;
       case 'switch':
@@ -507,6 +536,7 @@ export const CmsTablePage: React.FC<{ config: CmsPageConfig }> = ({
             options={f.options ?? []}
             placeholder="请选择"
             allowClear
+            disabled={f.readOnly}
             showSearch
             filterOption={(input, option) =>
               String(option?.label ?? '')
@@ -568,7 +598,7 @@ export const CmsTablePage: React.FC<{ config: CmsPageConfig }> = ({
           />
         );
       default:
-        return <Input placeholder={f.placeholder} />;
+        return <Input placeholder={f.placeholder} disabled={f.readOnly} />;
     }
   };
 
@@ -583,6 +613,14 @@ export const CmsTablePage: React.FC<{ config: CmsPageConfig }> = ({
       };
       if (f.type === 'richtext') {
         base.renderText = (v) => stripHtml(String(v ?? ''));
+      }
+      if (f.textMap) {
+        const map = f.textMap;
+        base.renderText = (v) => map[String(v ?? '')] ?? String(v ?? '');
+      }
+      if (f.dateTime) {
+        // 放在 textMap 之后：两个都配时以时间格式化为准（时间列不会配翻译表）
+        base.renderText = (v) => fmtDateTime(v);
       }
       if (f.type === 'switch') {
         base.render = (_, row) =>

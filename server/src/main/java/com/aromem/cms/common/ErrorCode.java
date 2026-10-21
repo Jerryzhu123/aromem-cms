@@ -18,6 +18,8 @@ public enum ErrorCode {
     NOT_FOUND(404, "资源不存在", HttpStatus.NOT_FOUND),
     METHOD_NOT_ALLOWED(405, "请求方法不支持", HttpStatus.METHOD_NOT_ALLOWED),
     UNSUPPORTED_MEDIA_TYPE(415, "不支持的请求内容类型", HttpStatus.UNSUPPORTED_MEDIA_TYPE),
+    /** 公开写接口的频控。429 是 RFC 9110 里的标准语义，别自己编 4xxx 业务码。 */
+    TOO_MANY_REQUESTS(429, "请求过于频繁，请稍后再试", HttpStatus.TOO_MANY_REQUESTS),
     INTERNAL_ERROR(500, "服务器内部错误", HttpStatus.INTERNAL_SERVER_ERROR),
 
     // ---- 媒体上传（4xxx 客户端问题）----

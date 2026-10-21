@@ -909,20 +909,37 @@ export const crossReferenceConfig: CmsPageConfig = {
 export const rfqConfig: CmsPageConfig = {
   domain: 'rfq',
   title: '询价管理',
+  // 除「处理状态」外全部只读，这不是懒，是跟后端白名单对齐：
+  // AdminContentService 里 rfq 域只允许写 status 一列，界面上却把
+  // 姓名、公司、留言都渲染成可编辑的输入框，运营改完点保存会看到
+  // 「保存成功」而数据一个字都没变——这种静默丢弃比直接禁止编辑更伤人。
+  // 另外，客户提交的内容属于原始证据，本来也不该让后台改。
   fields: [
-    { key: 'request_type', label: '类型', type: 'text', width: 80 },
-    { key: 'full_name', label: '姓名', type: 'text' },
-    { key: 'company', label: '公司', type: 'text' },
-    { key: 'work_email', label: '邮箱', type: 'text' },
-    { key: 'phone', label: '电话', type: 'text', width: 130 },
-    { key: 'country', label: '国家/地区', type: 'text', width: 110 },
-    { key: 'part_number', label: '询价型号', type: 'text', width: 130 },
-    { key: 'quantity', label: '数量', type: 'text', width: 80 },
-    { key: 'message', label: '留言', type: 'textarea', hideInTable: true },
-    { key: 'application', label: '应用场景', type: 'text', hideInTable: true },
-    { key: 'source_path', label: '来源页', type: 'text', hideInTable: true },
-    { key: 'source_series', label: '来源系列', type: 'text', hideInTable: true },
-    { key: 'source_model', label: '来源型号', type: 'text', hideInTable: true },
+    // 库里存 quote / sample，表格与抽屉都显示中文，运营不用每次在脑子里翻译
+    {
+      key: 'request_type',
+      label: '类型',
+      type: 'select',
+      options: [
+        { label: '询价', value: 'quote' },
+        { label: '样品申请', value: 'sample' },
+      ],
+      textMap: { quote: '询价', sample: '样品申请' },
+      readOnly: true,
+      width: 100,
+    },
+    { key: 'full_name', label: '姓名', type: 'text', readOnly: true },
+    { key: 'company', label: '公司', type: 'text', readOnly: true },
+    { key: 'work_email', label: '邮箱', type: 'text', readOnly: true },
+    { key: 'phone', label: '电话', type: 'text', readOnly: true, width: 130 },
+    { key: 'country', label: '国家/地区', type: 'text', readOnly: true, width: 110 },
+    { key: 'part_number', label: '询价型号', type: 'text', readOnly: true, width: 130 },
+    { key: 'quantity', label: '数量', type: 'text', readOnly: true, width: 80 },
+    { key: 'message', label: '留言', type: 'textarea', readOnly: true, hideInTable: true },
+    { key: 'application', label: '应用场景', type: 'text', readOnly: true, hideInTable: true },
+    { key: 'source_path', label: '来源页', type: 'text', readOnly: true, hideInTable: true },
+    { key: 'source_series', label: '来源系列', type: 'text', readOnly: true, hideInTable: true },
+    { key: 'source_model', label: '来源型号', type: 'text', readOnly: true, hideInTable: true },
     {
       key: 'status',
       label: '处理状态',
@@ -931,6 +948,14 @@ export const rfqConfig: CmsPageConfig = {
       defaultValue: 'NEW',
       width: 150,
     },
-    { key: 'create_time', label: '提交时间', type: 'text', width: 160 },
+    // 提交时间由数据库生成，只给人看，不给改
+    {
+      key: 'create_time',
+      label: '提交时间',
+      type: 'text',
+      dateTime: true,
+      readOnly: true,
+      width: 150,
+    },
   ],
 };

@@ -93,6 +93,14 @@ app:
     # 缺省留空即为「未配置」，此时通知会跳过并打 WARN，不会静默假装成功。
     revalidate-url: ${REVALIDATE_URL:http://127.0.0.1:3000/api/revalidate}
     revalidate-secret: ${REVALIDATE_SECRET:}
+  rfq:
+    # 新询盘推送。填企业微信或钉钉「群机器人」的 Webhook 地址即可，
+    # 两者都是 {"msgtype":"text","text":{"content":"..."}} 这种格式。
+    # 留空 = 只入库不推送（日志里会说明），此时询盘只能靠人自己进后台翻，
+    # 所以生产环境务必配上：漏掉一条真实询盘的代价远大于配一个机器人。
+    notify-webhook: ${RFQ_NOTIFY_WEBHOOK:}
+    # 推送里附带的「后台处理」链接
+    admin-url: ${RFQ_ADMIN_URL:https://admin.surmem.com/cms/rfq/}
   importer:
     # P1 一次性导入。默认关闭；执行：
     #   mvn spring-boot:run -Dspring-boot.run.arguments=--app.importer.enabled=true

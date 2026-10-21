@@ -338,7 +338,15 @@ export default function PoolProductView({
             <button type="button" className="pl-cancel" onClick={() => setOpen(false)}>
               {t.cancel}
             </button>
-            <button type="submit" className="pl-submit" disabled={sending}>
+            {/* 同 QuoteForm：不用 type="submit"，避免水合前触发原生整页提交。
+                本弹窗要先点击才打开、点开时必然已水合，风险本来很小，
+                但保持一致，免得以后有人把弹窗改成默认展开又踩回去。 */}
+            <button
+              type="button"
+              className="pl-submit"
+              disabled={sending}
+              onClick={() => form.submit()}
+            >
               {sending ? t.sending : t.submit}
             </button>
           </div>
