@@ -232,5 +232,10 @@ export default defineConfig({
     __APP_VERSION__: require('./../package.json').version,
     __UMI_VERSION__: require('@umijs/max/package.json').version,
     __UTOO_VERSION__: require('@utoo/pack/package.json').version,
+    // 官网域名。存量图片（/products/pool/…）只存在于官网，后台域名下会落到 SPA 兜底页，
+    // 预览时需要用这个 origin 拼绝对地址。媒体库图片（/media/…）走后端静态路由，不受影响。
+    __PUBLIC_SITE__: JSON.stringify(
+      process.env.PUBLIC_SITE || 'https://www.surmem.com',
+    ),
   },
 });

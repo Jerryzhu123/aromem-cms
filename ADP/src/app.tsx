@@ -3,6 +3,7 @@ import type { Settings as LayoutSettings } from '@ant-design/pro-components';
 import { SettingDrawer } from '@ant-design/pro-components';
 import type { RequestConfig, RunTimeLayoutConfig } from '@umijs/max';
 import { history, Link } from '@umijs/max';
+import { App as AntdApp } from 'antd';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import React from 'react';
@@ -204,9 +205,11 @@ export const request: RequestConfig = {
 
 export function rootContainer(container: React.ReactNode) {
   return (
-    <>
+    // App 提供 message/notification/modal 的上下文，让 antd 6 的静态方法也能拿到主题；
+    // component={false} 表示不额外包一层 div，避免影响既有布局高度。
+    <AntdApp component={false}>
       <OfflineBanner />
       <ErrorBoundary>{container}</ErrorBoundary>
-    </>
+    </AntdApp>
   );
 }

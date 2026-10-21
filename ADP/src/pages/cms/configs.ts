@@ -1,6 +1,12 @@
 /**
  * 各管理域的字段配置（与后端 AdminContentService.FIELDS 白名单一一对应）。
  * key 使用库列 snake_case，后端 snake() 转换恒等，白名单可命中。
+ *
+ * 控件选型原则（面向不懂技术的运营，不是面向程序员）：
+ * - 能枚举的绝不让手打：状态、语言、单位、对应关系一律 Segmented / Radio / Select；
+ * - 库列是 JSON 数组的，一律用专用控件（多图上传、标签输入、对象卡片列表），
+ *   界面上看不到 `["..."]` 或 `[{...}]` 这种方括号；
+ * - 文件/图片一律走 antd Upload，上传即得 /media/… 相对路径，字段只存路径。
  */
 import { CmsPageConfig, FieldDef } from './CmsTablePage';
 
@@ -15,23 +21,107 @@ export const STATUS_OPTIONS = [
   { label: '下线', value: 'OFFLINE' },
 ];
 
+/** 长度单位（尺寸列本身存展示串，单位列留空即不显示）。 */
+export const UNIT_LENGTH_OPTIONS = [
+  { label: '英寸 in', value: 'in' },
+  { label: '毫米 mm', value: 'mm' },
+];
+
+/** 流量单位。 */
+export const UNIT_FLOW_OPTIONS = [
+  { label: 'GPM', value: 'GPM' },
+  { label: 'L/min', value: 'L/min' },
+  { label: 'm³/h', value: 'm3/h' },
+];
+
+/** 商品数据完备度：区分「原厂资料已录」和「等客户补」的两批数据。 */
+export const DATA_STATUS_OPTIONS = [
+  { label: '待客户提供', value: 'awaiting-client-data' },
+  { label: '资料已齐', value: 'provided' },
+];
+
+/** 原厂型号对应关系。 */
+export const RELATION_OPTIONS = [
+  { label: '直接替代', value: 'direct replacement' },
+  { label: '兼容', value: 'compatible' },
+  { label: '规格相近', value: 'similar spec' },
+];
+
+/** 技术文档类型。 */
+export const DOC_TYPE_OPTIONS = [
+  { label: '数据表', value: 'datasheet' },
+  { label: '安装手册', value: 'manual' },
+  { label: '认证证书', value: 'certificate' },
+  { label: '图纸', value: 'drawing' },
+  { label: '其他', value: 'other' },
+];
+
+/** 文档语言。 */
+export const DOC_LANG_OPTIONS = [
+  { label: '中文', value: 'zh' },
+  { label: 'English', value: 'en' },
+  { label: '中英双语', value: 'bilingual' },
+];
+
+/** 建议选项：只做下拉提示，仍允许自由输入新值。 */
+export const INDUSTRY_SUGGESTIONS = [
+  '电力',
+  '钢铁',
+  '化工',
+  '造纸',
+  '食品饮料',
+  '医药',
+  '汽车',
+  '矿山',
+  '水处理',
+  '暖通空调',
+  '船舶',
+  '电子',
+];
+
+export const MATERIAL_SUGGESTIONS = [
+  'PP',
+  'PES',
+  'PTFE',
+  '尼龙',
+  '玻璃纤维',
+  '不锈钢',
+  '活性炭',
+  '纤维素',
+];
+
+export const CERT_SUGGESTIONS = [
+  'ISO 9001',
+  'ISO 14001',
+  'FDA',
+  'NSF 42',
+  'NSF 53',
+  'CE',
+  'RoHS',
+  'REACH',
+  'WRAS',
+];
+
+const toOptions = (list: string[]) =>
+  list.map((v) => ({ label: v, value: v }));
+
 const localeField = (): FieldDef => ({
   key: 'locale',
   label: '语言',
-  type: 'select',
+  type: 'segmented',
   options: LOCALE_OPTIONS,
   required: true,
   defaultValue: 'zh-CN',
-  width: 90,
+  width: 110,
 });
 
 const statusField = (): FieldDef => ({
   key: 'status',
   label: '状态',
-  type: 'select',
+  type: 'segmented',
   options: STATUS_OPTIONS,
   defaultValue: 'PUBLISHED',
-  width: 90,
+  width: 150,
 });
 
 const sortOrderField = (): FieldDef => ({
@@ -51,6 +141,23 @@ const seoFields = (): FieldDef[] => [
     hideInTable: true,
   },
 ];
+
+/** 引用滤芯系列的下拉（存 slug，不存 id）。 */
+const seriesSlugField = (
+  key = 'series_slug',
+  label = '所属系列',
+  extra: Partial<FieldDef> = {},
+): FieldDef => ({
+  key,
+  label,
+  type: 'select',
+  optionsDomain: 'fc-series',
+  optionsLabelKey: 'name_zh',
+  optionsValueKey: 'slug',
+  required: true,
+  width: 130,
+  ...extra,
+});
 
 export const articlesConfig: CmsPageConfig = {
   domain: 'articles',
@@ -155,11 +262,13 @@ export const downloadsConfig: CmsPageConfig = {
       key: 'file_url',
       label: '文件',
       type: 'file',
+      placeholder: '.pdf,.doc,.docx,.xls,.xlsx',
+      sizeKey: 'file_size_bytes',
       hideInTable: true,
     },
     {
       key: 'file_size_bytes',
-      label: '文件大小（字节）',
+      label: '文件大小（字节，上传后自动填）',
       type: 'number',
       width: 130,
     },
@@ -167,6 +276,12 @@ export const downloadsConfig: CmsPageConfig = {
     statusField(),
   ],
 };
+
+const PAGE_CODE_OPTIONS = [
+  { label: '关于我们 / about', value: 'about' },
+  { label: '加入我们 / join', value: 'join' },
+  { label: '联系我们 / contact', value: 'contact' },
+];
 
 export const pagesConfig: CmsPageConfig = {
   domain: 'pages',
@@ -176,9 +291,10 @@ export const pagesConfig: CmsPageConfig = {
     {
       key: 'code',
       label: '页面标识',
-      type: 'text',
+      type: 'select',
+      options: PAGE_CODE_OPTIONS,
       required: true,
-      placeholder: '如 about / join',
+      width: 150,
     },
     { key: 'title', label: '标题', type: 'text', required: true },
     { key: 'subtitle', label: '副标题', type: 'text' },
@@ -243,6 +359,14 @@ export const homeVideoConfig: CmsPageConfig = {
   ],
 };
 
+const SECTION_CODE_OPTIONS = [
+  { label: '新闻资讯 / news', value: 'news' },
+  { label: '产品中心 / products', value: 'products' },
+  { label: '工程实例 / projects', value: 'projects' },
+  { label: '关于我们 / about', value: 'about' },
+  { label: '视频区块 / video', value: 'video' },
+];
+
 export const homeSectionsConfig: CmsPageConfig = {
   domain: 'home-sections',
   title: '首页区块开关',
@@ -251,9 +375,10 @@ export const homeSectionsConfig: CmsPageConfig = {
     {
       key: 'code',
       label: '区块标识',
-      type: 'text',
+      type: 'select',
+      options: SECTION_CODE_OPTIONS,
       required: true,
-      placeholder: '如 news / products / projects',
+      width: 160,
     },
     { key: 'title', label: '标题', type: 'text' },
     { key: 'subtitle', label: '副标题', type: 'text' },
@@ -266,7 +391,13 @@ export const fcSeriesConfig: CmsPageConfig = {
   domain: 'fc-series',
   title: '滤芯系列',
   fields: [
-    { key: 'slug', label: '标识', type: 'text', required: true, placeholder: '如 pp-melt-blown' },
+    {
+      key: 'slug',
+      label: '标识',
+      type: 'text',
+      required: true,
+      placeholder: '如 pp-melt-blown',
+    },
     { key: 'name_zh', label: '中文名', type: 'text', required: true },
     { key: 'name_en', label: '英文名', type: 'text' },
     { key: 'icon_url', label: '分类图标', type: 'image', width: 110 },
@@ -274,17 +405,17 @@ export const fcSeriesConfig: CmsPageConfig = {
     { key: 'tagline_en', label: '英文标语', type: 'text' },
     {
       key: 'facets_zh',
-      label: '中文切面（|分隔）',
-      type: 'text',
+      label: '中文切面（筛选维度的中文名）',
+      type: 'pipeList',
       hideInTable: true,
-      placeholder: '过滤精度|总长|外径|端盖|滤材',
+      placeholder: '如 过滤精度、总长、外径、端盖、滤材，一项一个标签',
     },
     {
       key: 'facets_en',
-      label: '英文切面（|分隔）',
-      type: 'text',
+      label: '英文切面',
+      type: 'pipeList',
       hideInTable: true,
-      placeholder: 'Micron rating|Overall length',
+      placeholder: '如 Micron rating、Overall length，一项一个标签',
     },
     sortOrderField(),
     { key: 'coming_soon', label: '暂未上架', type: 'switch', width: 90 },
@@ -305,7 +436,7 @@ export const homeTilesConfig: CmsPageConfig = {
     {
       key: 'board',
       label: '所属分区',
-      type: 'select',
+      type: 'radio',
       options: BOARD_OPTIONS,
       required: true,
       width: 140,
@@ -313,7 +444,12 @@ export const homeTilesConfig: CmsPageConfig = {
     { key: 'name_zh', label: '中文名', type: 'text', required: true },
     { key: 'name_en', label: '英文名', type: 'text' },
     { key: 'image_url', label: '配图', type: 'image', width: 110 },
-    { key: 'link_url', label: '跳转链接', type: 'text', placeholder: '如 /products/filter-cartridges/high-flow' },
+    {
+      key: 'link_url',
+      label: '跳转链接',
+      type: 'text',
+      placeholder: '如 /products/filter-cartridges/high-flow',
+    },
     sortOrderField(),
     statusField(),
   ],
@@ -325,63 +461,266 @@ const RFQ_STATUS_OPTIONS = [
   { label: '已关闭', value: 'CLOSED' },
 ];
 
-const jsonAreaField = (key: string, label: string, placeholder: string): FieldDef => ({
-  key,
-  label,
-  type: 'textarea',
+/* ------------------------------------------------------------------ */
+/* 滤芯型号：JSON 列全部换成专用控件                                    */
+/* ------------------------------------------------------------------ */
+
+const compatibleModelField: FieldDef = {
+  key: 'compatible_models_json',
+  label: '可替代原厂型号',
+  type: 'objectList',
   hideInTable: true,
-  placeholder,
-});
+  itemTitleKey: 'oemModel',
+  itemAddLabel: '添加一条兼容型号',
+  itemEmptyHint: '暂无登记。添加后，前台详情页会显示「可替换的原厂型号」清单。',
+  itemBlank: {
+    brand: '',
+    oemModel: '',
+    relation: 'compatible',
+    note: '',
+    noteZh: '',
+  },
+  itemFields: [
+    { key: 'brand', label: '品牌', type: 'text', span: 8, placeholder: '如 Pall' },
+    {
+      key: 'oemModel',
+      label: '原厂型号',
+      type: 'text',
+      span: 8,
+      placeholder: '如 HC9601',
+    },
+    {
+      key: 'relation',
+      label: '对应关系',
+      type: 'select',
+      span: 8,
+      options: RELATION_OPTIONS,
+    },
+    { key: 'note', label: '备注（英）', type: 'text', span: 12 },
+    { key: 'noteZh', label: '备注（中）', type: 'text', span: 12 },
+  ],
+};
+
+const documentField: FieldDef = {
+  key: 'documents_json',
+  label: '技术文档',
+  type: 'objectList',
+  hideInTable: true,
+  itemTitleKey: 'title',
+  itemAddLabel: '添加一份文档',
+  itemEmptyHint:
+    '暂无文档。上传 PDF / Word 后，前台详情页会出现下载入口，文件大小自动记录。',
+  itemBlank: {
+    docType: 'datasheet',
+    title: '',
+    titleZh: '',
+    fileUrl: null,
+    fileSizeBytes: null,
+    lang: 'zh',
+    revision: 'A',
+  },
+  itemFields: [
+    {
+      key: 'docType',
+      label: '文档类型',
+      type: 'select',
+      span: 8,
+      options: DOC_TYPE_OPTIONS,
+    },
+    { key: 'title', label: '标题（英）', type: 'text', span: 8 },
+    { key: 'titleZh', label: '标题（中）', type: 'text', span: 8 },
+    {
+      key: 'fileUrl',
+      label: '文件',
+      type: 'file',
+      span: 24,
+      accept: '.pdf,.doc,.docx,.xls,.xlsx',
+      fileSizeKey: 'fileSizeBytes',
+    },
+    {
+      key: 'lang',
+      label: '语言',
+      type: 'select',
+      span: 12,
+      options: DOC_LANG_OPTIONS,
+    },
+    {
+      key: 'revision',
+      label: '版本号',
+      type: 'text',
+      span: 12,
+      placeholder: '如 A / V2',
+    },
+  ],
+};
 
 export const fcProductsConfig: CmsPageConfig = {
   domain: 'fc-products',
   title: '滤芯型号',
   fields: [
-    { key: 'series_slug', label: '所属系列', type: 'text', required: true, placeholder: '如 high-flow' },
-    { key: 'model', label: '型号', type: 'text', required: true },
-    { key: 'slug', label: '标识', type: 'text', required: true },
+    seriesSlugField(),
+    { key: 'model', label: '型号', type: 'text', required: true, width: 110 },
+    { key: 'slug', label: '标识', type: 'text', width: 110 },
     { key: 'title', label: '英文标题', type: 'text' },
     { key: 'title_zh', label: '中文标题', type: 'text' },
     { key: 'subtitle', label: '英文副题', type: 'text', hideInTable: true },
     { key: 'subtitle_zh', label: '中文副题', type: 'text', hideInTable: true },
-    jsonAreaField('gallery_json', '图集（URL 数组 JSON）', '["/uploads/images/xx.jpg"]'),
-    { key: 'overall_length', label: '总长', type: 'text', width: 80 },
-    { key: 'overall_length_unit', label: '总长单位', type: 'text', hideInTable: true },
-    { key: 'overall_length_unit_zh', label: '总长单位(中)', type: 'text', hideInTable: true },
-    { key: 'outside_diameter', label: '外径', type: 'text', width: 80 },
-    { key: 'outside_diameter_unit', label: '外径单位', type: 'text', hideInTable: true },
-    { key: 'outside_diameter_unit_zh', label: '外径单位(中)', type: 'text', hideInTable: true },
+
+    // 图集：多图上传，第一张即封面。列表列已经很多，图集只在表单里看，不占表格宽度。
+    {
+      key: 'gallery_json',
+      label: '商品图集',
+      type: 'imageList',
+      hideInTable: true,
+    },
+
+    // 尺寸：展示串（含英寸+毫米）+ 单位分栏
+    { key: 'overall_length', label: '总长', type: 'text', width: 100 },
+    {
+      key: 'overall_length_unit',
+      label: '总长单位',
+      type: 'select',
+      options: UNIT_LENGTH_OPTIONS,
+      hideInTable: true,
+    },
+    {
+      key: 'overall_length_unit_zh',
+      label: '总长单位（中）',
+      type: 'select',
+      options: UNIT_LENGTH_OPTIONS,
+      hideInTable: true,
+    },
+    { key: 'outside_diameter', label: '外径', type: 'text', width: 100 },
+    {
+      key: 'outside_diameter_unit',
+      label: '外径单位',
+      type: 'select',
+      options: UNIT_LENGTH_OPTIONS,
+      hideInTable: true,
+    },
+    {
+      key: 'outside_diameter_unit_zh',
+      label: '外径单位（中）',
+      type: 'select',
+      options: UNIT_LENGTH_OPTIONS,
+      hideInTable: true,
+    },
     // 泳池类专有：过滤面积（sq.ft.）。工业滤芯留空，按面积分档的筛选就靠这一列。
     { key: 'sqft', label: '面积(sq.ft.)', type: 'number', width: 100 },
     { key: 'inner_diameter', label: '内径', type: 'text', hideInTable: true },
     { key: 'micron_absolute', label: '绝对精度', type: 'text', width: 90 },
     { key: 'micron_nominal', label: '公称精度', type: 'text', width: 90 },
-    jsonAreaField('media_material_json', '滤材（数组 JSON）', '["PP"]'),
+
+    // 滤材：标签输入，常见材质给下拉建议，也能自己敲新的
+    {
+      key: 'media_material_json',
+      label: '滤材',
+      type: 'tags',
+      options: toOptions(MATERIAL_SUGGESTIONS),
+      placeholder: '如 PP / PES / PTFE，输入后回车',
+      hideInTable: true,
+    },
+
     { key: 'end_cap', label: '端盖', type: 'text', hideInTable: true },
     // 泳池类是「上开/下开」成对的端盖形式（如 3/8" Open / 6" Open），
     // 与工业滤芯的单一 end_cap 不是一回事，单列两栏。
-    { key: 'end_cap_top', label: '上端盖', type: 'text', width: 120 },
-    { key: 'end_cap_bottom', label: '下端盖', type: 'text', width: 120 },
+    {
+      key: 'end_cap_top',
+      label: '上端盖',
+      type: 'text',
+      width: 120,
+      placeholder: '如 3/8" Open',
+    },
+    {
+      key: 'end_cap_bottom',
+      label: '下端盖',
+      type: 'text',
+      width: 120,
+      placeholder: '如 6" Open',
+    },
     { key: 'oem_machine', label: '原厂机型', type: 'text', hideInTable: true },
     { key: 'connection', label: '接口', type: 'text', hideInTable: true },
     { key: 'flow_rate_min', label: '最小流量', type: 'text', hideInTable: true },
     { key: 'flow_rate_max', label: '最大流量', type: 'text', hideInTable: true },
-    { key: 'flow_rate_unit', label: '流量单位', type: 'text', hideInTable: true },
-    { key: 'flow_rate_unit_zh', label: '流量单位(中)', type: 'text', hideInTable: true },
-    { key: 'max_temperature_c', label: '最高温度℃', type: 'text', hideInTable: true },
-    { key: 'max_pressure_drop_psid', label: '最大压降psid', type: 'text', hideInTable: true },
-    jsonAreaField('application_industries_json', '应用行业（数组 JSON）', '["电力","钢铁"]'),
-    jsonAreaField('compatible_models_json', '兼容型号（对象数组 JSON）',
-      '[{"brand":"Pall","oemModel":"HC9601","relation":"compatible","note":"","noteZh":""}]'),
-    jsonAreaField('documents_json', '文档（对象数组 JSON）',
-      '[{"docType":"datasheet","title":"","titleZh":"","fileUrl":null,"fileSizeBytes":null,"lang":"zh","revision":"A"}]'),
-    jsonAreaField('certifications_json', '认证（数组 JSON）', '["ISO 9001"]'),
-    { key: 'seo_title', label: 'SEO标题', type: 'text', hideInTable: true },
-    { key: 'seo_title_zh', label: 'SEO标题(中)', type: 'text', hideInTable: true },
-    { key: 'seo_description', label: 'SEO描述', type: 'textarea', hideInTable: true },
-    { key: 'seo_description_zh', label: 'SEO描述(中)', type: 'textarea', hideInTable: true },
-    { key: 'data_status', label: '数据状态', type: 'text', width: 130, placeholder: 'awaiting-client-data / provided' },
-    { key: 'source_url', label: '数据来源页', type: 'text', hideInTable: true },
+    {
+      key: 'flow_rate_unit',
+      label: '流量单位',
+      type: 'select',
+      options: UNIT_FLOW_OPTIONS,
+      hideInTable: true,
+    },
+    {
+      key: 'flow_rate_unit_zh',
+      label: '流量单位（中）',
+      type: 'select',
+      options: UNIT_FLOW_OPTIONS,
+      hideInTable: true,
+    },
+    {
+      key: 'max_temperature_c',
+      label: '最高温度 ℃',
+      type: 'text',
+      hideInTable: true,
+    },
+    {
+      key: 'max_pressure_drop_psid',
+      label: '最大压降 psid',
+      type: 'text',
+      hideInTable: true,
+    },
+
+    // 应用行业：标签输入
+    {
+      key: 'application_industries_json',
+      label: '应用行业',
+      type: 'tags',
+      options: toOptions(INDUSTRY_SUGGESTIONS),
+      placeholder: '如 电力 / 钢铁 / 化工，输入后回车',
+      hideInTable: true,
+    },
+
+    // 兼容型号 / 技术文档：卡片列表，不再让人读 JSON
+    compatibleModelField,
+    documentField,
+
+    // 认证：标签输入
+    {
+      key: 'certifications_json',
+      label: '认证',
+      type: 'tags',
+      options: toOptions(CERT_SUGGESTIONS),
+      placeholder: '如 ISO 9001 / NSF 42，输入后回车',
+      hideInTable: true,
+    },
+
+    { key: 'seo_title', label: 'SEO 标题', type: 'text', hideInTable: true },
+    { key: 'seo_title_zh', label: 'SEO 标题（中）', type: 'text', hideInTable: true },
+    {
+      key: 'seo_description',
+      label: 'SEO 描述',
+      type: 'textarea',
+      hideInTable: true,
+    },
+    {
+      key: 'seo_description_zh',
+      label: 'SEO 描述（中）',
+      type: 'textarea',
+      hideInTable: true,
+    },
+    {
+      key: 'data_status',
+      label: '资料状态',
+      type: 'segmented',
+      options: DATA_STATUS_OPTIONS,
+      width: 150,
+    },
+    {
+      key: 'source_url',
+      label: '数据来源页',
+      type: 'text',
+      hideInTable: true,
+      placeholder: '原厂页面链接，便于追溯',
+    },
     sortOrderField(),
     statusField(),
   ],
@@ -391,23 +730,29 @@ export const crossReferenceConfig: CmsPageConfig = {
   domain: 'cross-reference',
   title: '型号对照',
   fields: [
-    { key: 'brand', label: '品牌', type: 'text', required: true },
-    { key: 'oem_model', label: '对型号号', type: 'text', required: true },
+    { key: 'brand', label: '品牌', type: 'text', required: true, width: 110 },
+    { key: 'oem_model', label: '对型号号', type: 'text', required: true, width: 120 },
     {
       key: 'relation',
       label: '对应关系',
-      type: 'select',
-      options: [
-        { label: '直接替代', value: 'direct replacement' },
-        { label: '兼容', value: 'compatible' },
-        { label: '规格相近', value: 'similar spec' },
-      ],
+      type: 'radio',
+      options: RELATION_OPTIONS,
       defaultValue: 'compatible',
-      width: 100,
+      required: true,
+      width: 130,
     },
-    { key: 'surmem_model', label: 'SURMEM 型号', type: 'text', required: true },
-    { key: 'series_slug', label: '所属系列', type: 'text', width: 130 },
-    { key: 'product_slug', label: '型号标识', type: 'text', width: 130 },
+    { key: 'surmem_model', label: 'SURMEM 型号', type: 'text', required: true, width: 130 },
+    seriesSlugField('series_slug', '所属系列', { required: false }),
+    {
+      key: 'product_slug',
+      label: '型号标识',
+      type: 'select',
+      optionsDomain: 'fc-products',
+      optionsLabelKey: 'model',
+      optionsValueKey: 'slug',
+      optionsRemote: true,
+      width: 130,
+    },
     { key: 'note', label: '备注(英)', type: 'text', hideInTable: true },
     { key: 'note_zh', label: '备注(中)', type: 'text', hideInTable: true },
     sortOrderField(),
@@ -435,10 +780,10 @@ export const rfqConfig: CmsPageConfig = {
     {
       key: 'status',
       label: '处理状态',
-      type: 'select',
+      type: 'segmented',
       options: RFQ_STATUS_OPTIONS,
       defaultValue: 'NEW',
-      width: 90,
+      width: 150,
     },
     { key: 'create_time', label: '提交时间', type: 'text', width: 160 },
   ],
