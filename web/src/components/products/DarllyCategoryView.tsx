@@ -113,36 +113,40 @@ export default function DarllyCategoryView({
         </div>
       </div>
 
-      <section>
-        <div className="dl-soncat">
-          <div className="dl-container">
-            <div className="dl-soncat-content">
-              <div className="dl-soncat-header">
-                {pick(category.header, locale)}
-              </div>
-              <div className="dl-soncat-body">
-                <button
-                  type="button"
-                  className={active === "all" ? "on" : undefined}
-                  onClick={() => selectSub("all")}
-                >
-                  {pick(category.allLabel, locale)}
-                </button>
-                {category.subcats.map((sub) => (
+      {/* 筛选条只在真有子分类时出现。膜接触器 4 条同属一类，
+          若照渲染会剩下一个孤零零的「所有」按钮，白占一行高度。 */}
+      {category.subcats.length > 0 && (
+        <section>
+          <div className="dl-soncat">
+            <div className="dl-container">
+              <div className="dl-soncat-content">
+                <div className="dl-soncat-header">
+                  {pick(category.header, locale)}
+                </div>
+                <div className="dl-soncat-body">
                   <button
                     type="button"
-                    key={sub.key}
-                    className={active === sub.key ? "on" : undefined}
-                    onClick={() => selectSub(sub.key)}
+                    className={active === "all" ? "on" : undefined}
+                    onClick={() => selectSub("all")}
                   >
-                    {pick(sub.label, locale)}
+                    {pick(category.allLabel, locale)}
                   </button>
-                ))}
+                  {category.subcats.map((sub) => (
+                    <button
+                      type="button"
+                      key={sub.key}
+                      className={active === sub.key ? "on" : undefined}
+                      onClick={() => selectSub(sub.key)}
+                    >
+                      {pick(sub.label, locale)}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <section>
         <div className="dl-products dl-application2 dl-product2">
