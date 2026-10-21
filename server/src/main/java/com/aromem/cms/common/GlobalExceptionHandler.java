@@ -4,9 +4,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
@@ -61,6 +66,70 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleIllegalArgument(IllegalArgumentException ex) {
         ErrorCode code = ErrorCode.BAD_REQUEST;
         return ResponseEntity.status(code.getHttpStatus()).body(ApiResponse.fail(code, ex.getMessage()));
+    }
+
+    /**
+     * 路径变量或查询参数类型转换失败。
+     *
+     * <p>典型场景：{@code /api/v1/admin/{domain}/{id}} 里的 id 声明为 long，
+     * 调用方传了 {@code /api/v1/admin/content/fc-products}（把 content 当 domain、
+     * fc-products 当 id），Spring 无法把 "fc-products" 解析成数字。这属于调用方
+     * 给错地址，是 400 不是 500 —— 让它落进兜底会在日志里伪装成后端故障。
+     */
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiResponse<Void>> handleTypeMismatch(
+            MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
+        ErrorCode code = ErrorCode.BAD_REQUEST;
+        log.warn("参数类型不匹配 [{} {}] {}={}", request.getMethod(), request.getRequestURI(),
+                ex.getName(), ex.getValue());
+        return ResponseEntity.status(code.getHttpStatus())
+                .body(ApiResponse.fail(code, "参数 " + ex.getName() + " 取值不合法: " + ex.getValue()));
+    }
+
+    /** 缺必填查询参数，同样是 400。 */
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMissingParam(
+            MissingServletRequestParameterException ex, HttpServletRequest request) {
+        ErrorCode code = ErrorCode.BAD_REQUEST;
+        log.warn("缺少必填参数 [{} {}] {}", request.getMethod(), request.getRequestURI(), ex.getParameterName());
+        return ResponseEntity.status(code.getHttpStatus())
+                .body(ApiResponse.fail(code, "缺少必填参数: " + ex.getParameterName()));
+    }
+
+    /**
+     * 请求体缺失或 JSON 无法解析。
+     *
+     * <p>POST 请求体为空、字段类型对不上、JSON 语法错误都走这里。以前会落进
+     * 500 兜底，导致「请求格式不对」被误报成「服务器挂了」。
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse<Void>> handleBodyUnreadable(
+            HttpMessageNotReadableException ex, HttpServletRequest request) {
+        ErrorCode code = ErrorCode.BAD_REQUEST;
+        log.warn("请求体无法解析 [{} {}]: {}", request.getMethod(), request.getRequestURI(),
+                ex.getMostSpecificCause().getMessage());
+        return ResponseEntity.status(code.getHttpStatus())
+                .body(ApiResponse.fail(code, "请求体缺失或格式不合法"));
+    }
+
+    /** 方法用错（对只支持 GET 的地址发了 POST），405。 */
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMethodNotSupported(
+            HttpRequestMethodNotSupportedException ex, HttpServletRequest request) {
+        ErrorCode code = ErrorCode.METHOD_NOT_ALLOWED;
+        log.warn("方法不支持 [{} {}]: {}", request.getMethod(), request.getRequestURI(), ex.getMessage());
+        return ResponseEntity.status(code.getHttpStatus())
+                .body(ApiResponse.fail(code, "该地址不支持 " + request.getMethod() + " 方法"));
+    }
+
+    /** Content-Type 不对（把 JSON 接口当表单提交），415。 */
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMediaTypeNotSupported(
+            HttpMediaTypeNotSupportedException ex, HttpServletRequest request) {
+        ErrorCode code = ErrorCode.UNSUPPORTED_MEDIA_TYPE;
+        log.warn("内容类型不支持 [{} {}]: {}", request.getMethod(), request.getRequestURI(), ex.getMessage());
+        return ResponseEntity.status(code.getHttpStatus())
+                .body(ApiResponse.fail(code, "不支持的内容类型: " + ex.getContentType()));
     }
 
     /**

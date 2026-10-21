@@ -30,7 +30,11 @@
   height: 100%;
   border-radius: 5px;
 }
+/* 商品名。html 标签是 h1（详情页唯一的一级标题），
+   这里的 20px 上下边距是原来 <p> 的浏览器默认值，显式写死是为了
+   换标签后不回退到 h1 默认的 0.67em（13.4px）——实测过，会差 6.6px。 */
 .dl-sp-tit {
+  margin: 20px 0;
   color: #0866b1;
   font-weight: 700;
   font-size: 20px;

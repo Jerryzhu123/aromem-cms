@@ -16,6 +16,8 @@ public enum ErrorCode {
     BAD_REQUEST(400, "请求参数不合法", HttpStatus.BAD_REQUEST),
     UNAUTHORIZED(401, "未登录或登录已失效", HttpStatus.UNAUTHORIZED),
     NOT_FOUND(404, "资源不存在", HttpStatus.NOT_FOUND),
+    METHOD_NOT_ALLOWED(405, "请求方法不支持", HttpStatus.METHOD_NOT_ALLOWED),
+    UNSUPPORTED_MEDIA_TYPE(415, "不支持的请求内容类型", HttpStatus.UNSUPPORTED_MEDIA_TYPE),
     INTERNAL_ERROR(500, "服务器内部错误", HttpStatus.INTERNAL_SERVER_ERROR),
 
     // ---- 媒体上传（4xxx 客户端问题）----

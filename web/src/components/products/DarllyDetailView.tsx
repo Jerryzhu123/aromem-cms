@@ -97,7 +97,10 @@ export default function DarllyDetailView({
                 <img src={item.img} alt={name} />
               </div>
               <div className="dl-sp-r">
-                <p className="dl-sp-tit">{name}</p>
+                {/* 商品名是本页唯一的 h1。原站这里用的是普通文本，
+                    但详情页没有 h1 对收录不友好，改标签后用 CSS 显式
+                    还原 <p> 的 20px 上下边距，视觉零变化。 */}
+                <h1 className="dl-sp-tit">{name}</h1>
                 <p className="dl-sp-desc">{desc}</p>
                 <a className="dl-sp-btn" href="#dl-anchor">
                   {t.more}
