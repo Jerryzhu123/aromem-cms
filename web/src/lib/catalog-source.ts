@@ -44,6 +44,8 @@ interface CatalogApiSeries {
   nameEn?: string | null;
   taglineZh?: string | null;
   taglineEn?: string | null;
+  /** V9 迁移的列：系列图标（媒体库 relativeUrl），2026-10-21 起接口才吐出来 */
+  iconUrl?: string | null;
   comingSoon?: boolean;
   checklistZh?: string[] | null;
   checklistEn?: string[] | null;
@@ -161,6 +163,7 @@ export const loadCatalogData = cache(async (): Promise<CatalogData> => {
     kind: kindOf(r.slug),
     name: bilingual(r.nameEn, r.nameZh),
     tagline: bilingual(r.taglineEn, r.taglineZh),
+    iconUrl: text(r.iconUrl),
   }));
 
   const lists = await Promise.all(
@@ -234,6 +237,7 @@ export async function allSeries(): Promise<CatalogSeries[]> {
     kind: kindOf(r.slug),
     name: bilingual(r.nameEn, r.nameZh),
     tagline: bilingual(r.taglineEn, r.taglineZh),
+    iconUrl: text(r.iconUrl),
   }));
 }
 

@@ -160,7 +160,11 @@ export const ABOUT = {
 /** 产品中心 */
 export const PRODUCTS = {
   eyebrow: "Products",
-  title: "Industrial Filter Cartridges & RO Membranes",
+  /**
+   * 大标题不再写死：哪些产品线真的有系列，就只写哪几条。
+   * 两条线都有时由这个连接词拼起来，只剩一条时直接用它自己的名字。
+   */
+  titleJoiner: " & ",
   intro:
     "Browse our product series and the model references available in each one. All specifications require supplier confirmation before quotation.",
   lines: [

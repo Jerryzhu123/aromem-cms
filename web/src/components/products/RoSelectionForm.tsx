@@ -129,11 +129,16 @@ const COPY = {
 
 export default function RoSelectionForm({
   locale = "en",
+  models,
 }: {
   locale?: "en" | "zh";
+  /** 后台还在售的型号 slug（页面从接口取好传进来），下拉只列这些 */
+  models: string[];
 }) {
   const t = COPY[locale];
   const base = locale === "zh" ? "/zh" : "";
+  // 型号清单跟着后台走：下架的型号不出现，一个都不剩时页面层直接 404
+  const available = RO_COMPARISON.filter((row) => models.includes(row.slug));
   const [form] = Form.useForm<FormValues>();
   const [submitting, setSubmitting] = useState(false);
   const pathname = usePathname();
@@ -141,12 +146,12 @@ export default function RoSelectionForm({
 
   const modelOptions = [
     { value: "", label: t.modelNa },
-    ...RO_COMPARISON.map((row) => ({ value: row.model, label: row.model })),
+    ...available.map((row) => ({ value: row.model, label: row.model })),
   ];
 
   async function onFinish(values: FormValues) {
     setSubmitting(true);
-    const picked = RO_COMPARISON.find((row) => row.model === values.model);
+    const picked = available.find((row) => row.model === values.model);
     const detail = [
       values.membraneSize ? `${t.size}: ${values.membraneSize}` : "",
       values.feedTds ? `${t.tds}: ${values.feedTds}` : "",

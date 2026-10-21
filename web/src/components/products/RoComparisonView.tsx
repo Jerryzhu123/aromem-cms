@@ -5,6 +5,12 @@
  * 1. 每个系列测试条件不同，横向比 GPD 前必须先看 feed / pressure 两列；
  * 2. XLP-4040 的英文页与中文页数值不一致，页面必须显式标注，不能只选一个当真值；
  * 3. 所有数值都标为「厂家公布参考值」，不是 SURMEM 的性能承诺。
+ *
+ * 2026-10-21 追加：表格只列「后台还在售」的型号。可用型号清单由页面从接口取好
+ * 传进来，这里按 slug 过滤 RO_COMPARISON——后台把某个型号下架，这行就消失；
+ * 一个都不剩时页面直接 404（判断在页面层，不在这里）。
+ * 为什么参数仍取自常量：库里只存型号与文案，产水量、脱盐率这些对比参数
+ * 没有对应字段，属于厂家公布值的静态记录。
  */
 import Link from "next/link";
 import { type Locale, RO_COMPARISON } from "@/data/catalog";
@@ -13,8 +19,8 @@ const COPY = {
   en: {
     eyebrow: "RO membranes",
     title: "RO Membrane Technical Comparison",
-    intro:
-      "Manufacturer-published reference specifications for 10 industrial RO membrane models.",
+    intro: (n: number) =>
+      `Manufacturer-published reference specifications for ${n} industrial RO membrane models.`,
     status:
       "Specification status: verified against the manufacturer's currently accessible English product pages. The latest brochure and the exact supplied revision still require cross-checking. Flow rates are nominal test values, not guaranteed field performance.",
     alertTitle: "Revision alert — XLP-4040",
@@ -41,7 +47,7 @@ const COPY = {
   zh: {
     eyebrow: "反渗透膜",
     title: "RO 膜技术参数对比",
-    intro: "10 款工业反渗透膜元件的厂家公布参考规格。",
+    intro: (n: number) => `${n} 款工业反渗透膜元件的厂家公布参考规格。`,
     status:
       "规格状态：已对照厂家当前可访问的英文产品页核实。最新版手册与确切供货批次仍需复核。产水量为标称测试值，不构成现场性能保证。",
     alertTitle: "版本提示 — XLP-4040",
@@ -67,9 +73,17 @@ const COPY = {
   },
 } as const;
 
-export default function RoComparisonView({ locale }: { locale: Locale }) {
+export default function RoComparisonView({
+  locale,
+  models,
+}: {
+  locale: Locale;
+  /** 后台还在售的型号 slug（页面从接口取好传进来），表格只列这些 */
+  models: string[];
+}) {
   const t = COPY[locale];
   const base = locale === "zh" ? "/zh" : "";
+  const rows = RO_COMPARISON.filter((row) => models.includes(row.slug));
 
   return (
     <>
@@ -77,7 +91,7 @@ export default function RoComparisonView({ locale }: { locale: Locale }) {
         <div className="wrap">
           <div className="eyebrow">{t.eyebrow}</div>
           <h1>{t.title}</h1>
-          <p>{t.intro}</p>
+          <p>{t.intro(rows.length)}</p>
         </div>
       </div>
 
@@ -104,7 +118,7 @@ export default function RoComparisonView({ locale }: { locale: Locale }) {
                 </tr>
               </thead>
               <tbody>
-                {RO_COMPARISON.map((row) => (
+                {rows.map((row) => (
                   <tr key={row.model}>
                     <th scope="row">
                       <Link className="link" href={`${base}/products/ro-membranes/${row.slug}`}>

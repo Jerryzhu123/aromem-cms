@@ -12,8 +12,8 @@
  * 接口说有几条就显示几条，一条都没有这段整块不渲染，客户端不再参与判断。
  * 后台增删系列、改名、调顺序、下线，由缓存标签 catalog 触发重新渲染，刷新即见。
  *
- * 图标仍用本地线描图（data/tiles.ts）：系列接口目前不返回 icon_url，
- * 后台 fc-series 里配了图标也传不过来，这是另一个待补的缺口。
+ * 图标优先用后台配的（fc_series.icon_url → 媒体库），没配才回落到本地线描图
+ * （data/tiles.ts）。接口 2026-10-21 起才返回 iconUrl，此前后台配了也传不过来。
  */
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
@@ -38,7 +38,7 @@ export default function ProductTiles({
   return (
     <div className="product-tiles">
       {series.map((s) => {
-        const icon = tileIconOf(s.slug);
+        const icon = s.iconUrl?.trim() || tileIconOf(s.slug);
         return (
           <Link
             className="product-tile"

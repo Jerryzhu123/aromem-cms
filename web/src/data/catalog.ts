@@ -32,6 +32,8 @@ export interface CatalogSeries {
   kind: "filter" | "ro";
   name: Bilingual;
   tagline: Bilingual;
+  /** 系列图标（后台媒体库的 relativeUrl，如 /media/2026/10/x.png）；没配为空 */
+  iconUrl?: string;
 }
 
 /** 单个型号 */
