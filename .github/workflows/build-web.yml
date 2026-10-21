@@ -81,16 +81,22 @@ jobs:
           tar -czf "$RUNNER_TEMP/surmem-web-node.tar.gz" -C "$ROOT" .
           ls -lh "$RUNNER_TEMP/surmem-web-node.tar.gz"
 
+          # GitHub 单文件上限 100MB，产物包约 110MB 会被拒绝推送，
+          # 按 90MB 分卷，部署时 cat 拼回
+          cd "$RUNNER_TEMP"
+          split -b 90m -d -a 2 surmem-web-node.tar.gz surmem-web-node.tar.gz.part-
+          ls -lh surmem-web-node.tar.gz.part-*
+
       - name: 发布产物到 web-out 分支
         run: |
           set -e
-          test -f "$RUNNER_TEMP/surmem-web-node.tar.gz" || { echo "产物包不存在"; exit 1; }
+          test -f "$RUNNER_TEMP/surmem-web-node.tar.gz.part-00" || { echo "产物分卷不存在"; exit 1; }
           mkdir -p "$RUNNER_TEMP/publish" && cd "$RUNNER_TEMP/publish"
           git init -q
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          cp "$RUNNER_TEMP/surmem-web-node.tar.gz" surmem-web-node.tar.gz
-          printf 'source commit: %s\nbuilt at: %s\n形态: standalone（预渲染 + 按需再生成）\n泳池图: 已剔除，部署时由服务器硬链接\n' \
+          cp "$RUNNER_TEMP"/surmem-web-node.tar.gz.part-* .
+          printf 'source commit: %s\nbuilt at: %s\n形态: standalone（预渲染 + 按需再生成）\n泳池图: 已剔除，部署时由服务器硬链接\n分卷: 每卷 90MB，部署前用 cat 拼回 surmem-web-node.tar.gz\n' \
             "$GITHUB_SHA" "$(date -u +%FT%TZ)" > BUILD_INFO.txt
           git add -A
           git commit -q -m "web-out from ${GITHUB_SHA:0:7}"
