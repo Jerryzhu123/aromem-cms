@@ -75,6 +75,16 @@ jobs:
           set -o pipefail
           pnpm install --no-frozen-lockfile --reporter=append-only 2>&1 | tee -a "$LOG"
 
+      - name: 类型检查（结果写入日志，不阻塞构建）
+        working-directory: ADP
+        # max build 只做打包不做类型检查，类型错误会静默通过。
+        # 这里补一遍 tsc --noEmit，结果进 build.log 便于事后翻查；
+        # 暂设 continue-on-error，避免存量历史错误把整条流水线拦死。
+        continue-on-error: true
+        run: |
+          echo "=== tsc --noEmit 起始 $(date -u +%FT%TZ) ===" | tee -a "$LOG"
+          pnpm run tsc 2>&1 | tee -a "$LOG" && echo "tsc: 无类型错误" | tee -a "$LOG" || echo "tsc: 存在类型错误（详见上方）" | tee -a "$LOG"
+
       - name: 构建管理后台
         working-directory: ADP
         run: |
