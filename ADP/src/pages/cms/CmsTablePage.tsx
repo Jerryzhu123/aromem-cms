@@ -348,6 +348,13 @@ export const CmsTablePage: React.FC<{ config: CmsPageConfig }> = ({
         if (f.type === 'date' && values[f.key]) {
           values[f.key] = dayjs(values[f.key]);
         }
+        // dateTime 列在表格里已经裁到分钟，抽屉里却是另一个文本控件，
+        // 不在这里一并处理就会出现「列表显示 2026-10-22 00:02、抽屉显示
+        // 2026-10-22T00:02:44.01」的割裂。这类列必然只读，改的是展示值，
+        // 保存不会回写（后端 READ_ONLY_COLUMNS 也挡住了 create_time）。
+        if (f.dateTime && values[f.key]) {
+          values[f.key] = fmtDateTime(values[f.key]);
+        }
         if (JSON_ARRAY_TYPES.has(f.type)) {
           values[f.key] = parseJsonArray(values[f.key]);
         }
