@@ -11,7 +11,7 @@
  * 与原站行为差异（仅一处）：原站的子分类与页码都是独立 URL 的新页面，
  * 我们做成同页即时切换——因为静态导出下每个子分类再铺一遍分页路由
  * 会多出十几条与父级重复的地址，对收录没有增益。筛选与翻页依据都是
- * 原站真实数据（子分类归属见 data/darlly.ts，每页条数同原站 9 条），
+ * 后台真实数据（子分类归属在型号的 subcats_json 字段，每页条数同原站 9 条），
  * 交集为空时给空状态，不编造型号。
  */
 "use client";
@@ -19,7 +19,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { type Locale, pick } from "@/data/catalog";
-import type { DarllyCategory } from "@/data/darlly";
+import type { DarllyCategory } from "@/data/darlly-types";
 
 const COPY = {
   en: {

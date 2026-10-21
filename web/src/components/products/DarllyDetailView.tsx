@@ -18,13 +18,12 @@
  *   3. 最近浏览用本站自己的 localStorage 键（dl-history），不复用原站的 history，
  *      否则从原站跳转过来的访客会看到本不该存在的记录。
  *
- * 正文 HTML 来自 data/darlly-detail.ts（脚本生成），这里只做渲染，不做改写。
+ * 正文 HTML 由页面从后台取好（detail_html_zh / detail_html_en 两列）传进来，
+ * 这里只做渲染，不做改写。
  */
 import Link from "next/link";
 import { type Locale, pick } from "@/data/catalog";
-import type { DarllyCategory, DarllyItem } from "@/data/darlly";
-import { getDarllyDetail } from "@/data/darlly-detail";
-import { getDarllyDetailEn } from "@/data/darlly-detail-en";
+import type { DarllyCategory, DarllyDetails, DarllyItem } from "@/data/darlly-types";
 import DarllyRecentViewed from "./DarllyRecentViewed";
 
 const COPY = {
@@ -60,20 +59,23 @@ const COPY = {
 export default function DarllyDetailView({
   category,
   item,
+  details,
   locale,
 }: {
   category: DarllyCategory;
   item: DarllyItem;
+  /** 中英两份正文，由页面在服务端取好传进来（2026-10-21 起正文在库里） */
+  details?: DarllyDetails;
   locale: Locale;
 }) {
   const t = COPY[locale];
   const base = locale === "zh" ? "/zh" : "";
   /* 中英文各自隔离：
-     中文页只读 darlly-detail.ts（原厂中文数据表）；
-     英文页优先读 darlly-detail-en.ts（原厂英文原文，非机翻），
+     中文页只读库里的中文正文（原厂中文数据表）；
+     英文页优先读库里存的英文正文（原厂英文原文，非机翻），
      没有英文原页的型号才回退中文正文，并在页首说明。 */
-  const zhDetail = getDarllyDetail(item.slug);
-  const enDetail = locale === "en" ? getDarllyDetailEn(item.slug) : undefined;
+  const zhDetail = details?.zh;
+  const enDetail = locale === "en" ? details?.en : undefined;
   const detail = enDetail ?? zhDetail;
   const usingZhFallback = locale === "en" && !enDetail && Boolean(zhDetail);
   const name = pick(item.name, locale);

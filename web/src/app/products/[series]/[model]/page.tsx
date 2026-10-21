@@ -3,14 +3,17 @@ import { notFound } from "next/navigation";
 import ProductView from "@/components/products/ProductView";
 import DarllyDetailView from "@/components/products/DarllyDetailView";
 import { pick } from "@/data/catalog";
-import { catalogProductParams, getSeries } from "@/lib/catalog-source";
-import { DARLLY_ITEMS, getDarllyCategory, getDarllyItem } from "@/data/darlly";
-import { getDarllyDetail } from "@/data/darlly-detail";
-import { getDarllyDetailEn } from "@/data/darlly-detail-en";
+import { catalogProductParams, getProduct, getSeries } from "@/lib/catalog-source";
+/* darlly 三个品类的型号与正文 2026-10-21 起也在库里，渲染时经接口取 */
+import {
+  darllyCategory,
+  darllyDetails,
+  darllyItem,
+  darllyProductParams,
+} from "@/lib/darlly-source";
 import PoolProductView from "@/components/products/PoolProductView";
 /* 泳池数据来自后台接口的构建期快照，不再读编译期常量 */
 import { getPoolItem, getPoolDetail, poolSlugs } from "@/lib/pool-source";
-import { resolveCatalogProduct } from "@/data/darlly-adapter";
 
 type PageProps = { params: Promise<{ series: string; model: string }> };
 
@@ -23,10 +26,8 @@ export async function generateStaticParams() {
   const rows = [
     /* 工业滤芯 25 条：2026-10-21 起在构建期从后台接口取，不再是编译期常量 */
     ...(await catalogProductParams()),
-    ...DARLLY_ITEMS.map(({ series, item }) => ({
-      series,
-      model: item.slug,
-    })),
+    /* 微孔折叠 / 大流量 / 多折共 50 条：同样构建期从后台接口取 */
+    ...(await darllyProductParams()),
     /* 泳池滤芯：件号即网址段 */
     ...poolList.map((slug) => ({ series: "pool", model: slug })),
   ];
@@ -53,7 +54,16 @@ export async function generateMetadata({
       alternates: { canonical: `/products/pool/${pool.slug}` },
     };
   }
-  const product = await resolveCatalogProduct(series, model);
+  /* darlly 型号的标题简介也走库：后台改型号名，搜索结果跟着变 */
+  const darllyIt = await darllyItem(series, model);
+  if (darllyIt) {
+    return {
+      title: darllyIt.name.en,
+      description: `${darllyIt.model} — ${darllyIt.desc.en}`.slice(0, 300),
+      alternates: { canonical: `/products/${series}/${model}` },
+    };
+  }
+  const product = await getProduct(series, model);
   if (!product) return { title: "Product" };
   return {
     title: product.name.en,
@@ -74,25 +84,28 @@ export default async function ProductPage({ params }: PageProps) {
   }
 
   const item = await getSeries(series);
-  const product = await resolveCatalogProduct(series, model);
-  if (!item || !product) notFound();
 
-  /* darlly 系列走原站详情页版式：英文页优先原厂英文正文，无英文原页则回退中文 */
-  const darllyCategory = getDarllyCategory(series);
-  const darllyItem = getDarllyItem(series, model);
-  if (
-    darllyCategory &&
-    darllyItem &&
-    (getDarllyDetailEn(darllyItem.slug) || getDarllyDetail(darllyItem.slug))
-  ) {
-    return (
-      <DarllyDetailView
-        category={darllyCategory}
-        item={darllyItem}
-        locale="en"
-      />
-    );
+  /* darlly 系列走原站详情页版式：英文页优先原厂英文正文，无英文原页则回退中文。
+     分支判断放在 getProduct 之前 —— darlly 现在也在库里的型号清单中，
+     先判断能少查一次库，也让「没有正文」的型号自然落到站内模板。 */
+  const darllyCat = await darllyCategory(series);
+  const darllyIt = await darllyItem(series, model);
+  if (darllyCat && darllyIt) {
+    const details = await darllyDetails(series, model);
+    if (details.zh || details.en) {
+      return (
+        <DarllyDetailView
+          category={darllyCat}
+          item={darllyIt}
+          details={details}
+          locale="en"
+        />
+      );
+    }
   }
+
+  const product = await getProduct(series, model);
+  if (!item || !product) notFound();
 
   return <ProductView series={item} product={product} locale="en" />;
 }

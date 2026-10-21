@@ -10,7 +10,7 @@
  * 对外仍暴露 PoolItem / PoolDetail / DarllyCategory 三个既有形状，组件层零改动。
  */
 
-import type { DarllyCategory } from "@/data/darlly";
+import type { DarllyCategory } from "@/data/darlly-types";
 import type { PoolItem } from "@/data/pool";
 import type { PoolDetail } from "@/data/pool-detail";
 import { loadPoolRaw, type PoolApiCrossRef, type PoolApiProduct } from "@/lib/pool-api";

@@ -2,12 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import DarllyCategoryView from "@/components/products/DarllyCategoryView";
 import SeriesView from "@/components/products/SeriesView";
-import { getDarllyCategory } from "@/data/darlly";
-import {
-  catalogSeriesSlugs,
-  getProductsBySeries,
-  getSeries,
-} from "@/lib/catalog-source";
+import { catalogSeriesSlugs, getProductsBySeries, getSeries } from "@/lib/catalog-source";
+import { darllyCategory } from "@/lib/darlly-source";
 import { poolCategory } from "@/lib/pool-source";
 
 type PageProps = { params: Promise<{ series: string }> };
@@ -26,7 +22,7 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { series } = await params;
-  const darlly = getDarllyCategory(series);
+  const darlly = await darllyCategory(series);
   if (darlly) {
     return {
       title: darlly.crumb.en,
@@ -46,8 +42,9 @@ export async function generateMetadata({
 export default async function SeriesPage({ params }: PageProps) {
   const { series } = await params;
 
-  /* 已完整复制的三个品类（微孔折叠 / 大流量 / 多折）走 darlly 版式 */
-  const darlly = getDarllyCategory(series);
+  /* 已完整复制的三个品类（微孔折叠 / 大流量 / 多折）走 darlly 版式。
+     2026-10-21 起数据从后台接口取：后台换主图、改文案、下架型号，页面即时生效。 */
+  const darlly = await darllyCategory(series);
   if (darlly) {
     return <DarllyCategoryView category={darlly} locale="en" />;
   }
