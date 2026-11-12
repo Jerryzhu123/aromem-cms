@@ -1,0 +1,6 @@
+job status: success
+commit: eaff88a98edd5fc39fc6d1b4f3323002f4152e69
+形态: standalone（预渲染 + 按需再生成）
+-rw-r--r-- 1 runner runner 110M Nov 12 03:51 /home/runner/work/_temp/surmem-web-node.tar.gz
+/home/runner/work/_temp/node-dist/.next/server/app/products/pool
+pool html: 495

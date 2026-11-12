@@ -1,0 +1,101 @@
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages: +121
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 121, reused 0, downloaded 14, added 1
+Progress: resolved 121, reused 0, downloaded 24, added 13
+Progress: resolved 121, reused 0, downloaded 64, added 53
+Progress: resolved 121, reused 0, downloaded 72, added 57
+Progress: resolved 121, reused 0, downloaded 73, added 57
+Progress: resolved 121, reused 0, downloaded 86, added 71
+Progress: resolved 121, reused 0, downloaded 121, added 121, done
+
+dependencies:
++ @ant-design/icons 6.3.4
++ @ant-design/nextjs-registry 1.3.0
++ antd 6.6.6
++ axios 1.20.0
++ next 16.3.5
++ react 19.2.4
++ react-dom 19.2.4
+
+devDependencies:
++ @types/node 24.19.2
++ @types/react 19.3.0
++ @types/react-dom 19.3.0
++ typescript 5.0.2
+
+Done in 8.6s using pnpm v9.15.9
+
+> surmem-web@1.0.0 build /home/runner/work/aromem-cms/aromem-cms/web
+> next build
+
+▲ Next.js 16.3.5 (Turbopack)
+✓ Running next.config.ts took 39ms
+⚠ No build cache found. Please configure build caching for faster rebuilds. Read more: https://nextjs.org/docs/messages/no-cache
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 20.7s
+  Running TypeScript ...
+⚠ Minimum recommended TypeScript version is v5.1.0, older versions can potentially be incompatible with Next.js. Detected: 5.0.2
+  Finished TypeScript in 8.3s ...
+  Collecting page data using 1 worker ...
+  Generating static pages using 1 worker (0/1182) ...
+  Generating static pages using 1 worker (295/1182) 
+  Generating static pages using 1 worker (590/1182) 
+  Generating static pages using 1 worker (886/1182) 
+✓ Generating static pages using 1 worker (1182/1182) in 56s
+  Finalizing page optimization ...
+
+Route (app)                        Revalidate  Expire
+┌ ○ /
+├ ○ /_not-found
+├ ○ /about
+├ ƒ /api/revalidate
+├ ○ /applications
+├ ○ /contact
+├ ○ /gallery
+├ ○ /oem
+├ ○ /products                              1h      1y
+├   /products/[series]
+│ ├ ● /products/pleated                    1h      1y
+│ ├ ● /products/high-flow                  1h      1y
+│ ├ ● /products/depth                      1h      1y
+│ └ ● [+5 more paths]
+├   /products/[series]/[model]
+│ ├ ● /products/pleated/stb                1h      1y
+│ ├ ● /products/pleated/btg                1h      1y
+│ ├ ● /products/pleated/131                1h      1y
+│ └ ● [+570 more paths]
+├ ○ /ro-comparison                         1h      1y
+├ ○ /ro-selection-guide                    1h      1y
+├ ○ /zh
+├ ○ /zh/about
+├ ○ /zh/applications
+├ ○ /zh/contact
+├ ○ /zh/gallery
+├ ○ /zh/oem
+├ ○ /zh/products                           1h      1y
+├   /zh/products/[series]
+│ ├ ● /zh/products/pleated                 1h      1y
+│ ├ ● /zh/products/high-flow               1h      1y
+│ ├ ● /zh/products/depth                   1h      1y
+│ └ ● [+5 more paths]
+├   /zh/products/[series]/[model]
+│ ├ ● /zh/products/pleated/stb             1h      1y
+│ ├ ● /zh/products/pleated/btg             1h      1y
+│ ├ ● /zh/products/pleated/131             1h      1y
+│ └ ● [+570 more paths]
+├ ○ /zh/ro-comparison                      1h      1y
+└ ○ /zh/ro-selection-guide                 1h      1y
+
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand
+
