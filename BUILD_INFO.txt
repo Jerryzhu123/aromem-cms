@@ -1,0 +1,5 @@
+source commit: eaff88a98edd5fc39fc6d1b4f3323002f4152e69
+built at: 2026-11-12T03:51:56Z
+形态: standalone（预渲染 + 按需再生成）
+泳池图: 已剔除，部署时由服务器硬链接
+分卷: 每卷 90MB，部署前用 cat 拼回 surmem-web-node.tar.gz
