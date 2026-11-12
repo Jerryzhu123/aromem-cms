@@ -1,0 +1,5 @@
+job status: success
+commit: eaff88a98edd5fc39fc6d1b4f3323002f4152e69
+finished: 2026-11-12T03:51:27Z
+--- dist 是否存在 ---
+/home/runner/work/aromem-cms/aromem-cms/ADP/dist
